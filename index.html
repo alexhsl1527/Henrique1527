@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestão de Escala Don Garcia</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --primary:#8B0000;        /* vermelho vinho */
@@ -394,6 +395,7 @@ function renderDashboard(){
         <button class="btn" onclick="navigate('funcionarios')">👥 Gerenciar Funcionários</button>
         <button class="btn gold" onclick="navigate('gerar')">🗓️ Gerar Nova Escala</button>
         <button class="btn secondary" onclick="navigate('visualizar')">📋 Ver Escalas Salvas</button>
+        <button class="btn" onclick="exportarDadosURL()" style="background:#2196F3;color:white;border-color:#2196F3">🔗 Compartilhar</button>
       </div>
     </div>
   `;
@@ -1281,10 +1283,72 @@ function exportarPDF(id){
 }
 
 /* ============================================================
+   SINCRONIZAÇÃO VIA URL (compartilhamento entre máquinas)
+   ============================================================ */
+function exportarDadosURL(){
+  const dados={
+    setores:DB.setores(),
+    funcionarios:DB.funcionarios(),
+    escalas:DB.escalas()
+  };
+  const json=JSON.stringify(dados);
+  const b64=btoa(unescape(encodeURIComponent(json)));
+  const url=window.location.origin+window.location.pathname+'?dados='+b64;
+  
+  const bodyHTML=`
+    <div style="text-align:center">
+      <p style="margin-bottom:16px;color:var(--text-muted)">Copie este link e abra em outra máquina para carregar todos os dados (setores, funcionários e escalas):</p>
+      <div style="background:var(--bg-light);padding:12px;border-radius:8px;margin-bottom:16px;word-break:break-all;font-family:monospace;font-size:11px;border:1px solid var(--border)">${url}</div>
+      <button onclick="navigator.clipboard.writeText('${url.replace(/'/g,"\\'")}').then(()=>toast('Link copiado!','success'))" class="btn" style="background:#2196F3;color:white">📋 Copiar Link</button>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+        <div id="qrcode" style="display:inline-block"></div>
+      </div>
+    </div>
+  `;
+  
+  openModal('🔗 Compartilhar Dados', bodyHTML, '', null);
+  
+  // Gera QR Code após modal abrir
+  setTimeout(()=>{
+    const qrEl=document.getElementById('qrcode');
+    if(qrEl) new QRCode(qrEl,{text:url,width:200,height:200});
+  },100);
+}
+
+function importarDadosURL(){
+  const params=new URLSearchParams(window.location.search);
+  const dadosB64=params.get('dados');
+  if(!dadosB64)return false;
+  
+  try{
+    const json=decodeURIComponent(escape(atob(dadosB64)));
+    const dados=JSON.parse(json);
+    if(dados.setores)DB.saveSetores(dados.setores);
+    if(dados.funcionarios)DB.saveFuncionarios(dados.funcionarios);
+    if(dados.escalas)DB.saveEscalas(dados.escalas);
+    
+    toast('✅ Dados importados com sucesso! Redirecionando...','success');
+    setTimeout(()=>{
+      window.history.replaceState({},'',window.location.pathname);
+      navigate('dashboard');
+      location.reload();
+    },1500);
+    return true;
+  }catch(e){
+    toast('Erro ao importar dados da URL.','error');
+    return false;
+  }
+}
+
+/* ============================================================
    INICIALIZAÇÃO
    ============================================================ */
-document.addEventListener('DOMContentLoaded',()=>navigate('dashboard'));
-if(document.readyState!=='loading') navigate('dashboard');
+document.addEventListener('DOMContentLoaded',()=>{
+  if(!importarDadosURL())navigate('dashboard');
+});
+if(document.readyState!=='loading'){
+  if(!importarDadosURL())navigate('dashboard');
+}
 
 
 </script>
