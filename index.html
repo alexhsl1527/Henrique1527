@@ -1134,6 +1134,21 @@ function exportarPDF(id){
   const PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight();
   const ML=10, MR=10;
   const N=diasNoMes(e.ano,e.mes), nS=numSemanas(e.ano,e.mes);
+  // backfill de horários (escalas geradas antes de configurar horários ou sem entrada/saída)
+  (function(){
+    const setor=DB.setores().find(s=>s.id===e.setorId)||null;
+    Object.keys(e.dados||{}).forEach(fid=>{
+      const reg=e.dados[fid];
+      const func=DB.funcionarios().find(f=>f.id===fid)||null;
+      for(let d=1;d<=N;d++){
+        const cell=reg.dias[d]; if(!cell||cell.status!==ST_TRABALHO) continue;
+        if(!cell.entrada && !cell.saida){
+          const hr=resolveHorario(setor,func,cell.turno,cell.jornada);
+          cell.entrada=hr.entrada; cell.saida=hr.saida;
+        }
+      }
+    });
+  })();
   // Cabeçalho documento
   doc.setFillColor(...PDF_COLORS.header);doc.rect(0,0,PW,18,'F');
   doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);
