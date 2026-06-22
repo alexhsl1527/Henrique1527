@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de Escala Don Garcia</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --primary:#8B0000;        /* vermelho vinho */
+  --primary-dark:#5e0000;
+  --primary-light:#b22222;
+  --accent:#d4af37;         /* dourado */
+  --bg:#f4f5f7;
+  --surface:#ffffff;
+  --text:#2c2c2c;
+  --muted:#6b7280;
+  --border:#e2e5ea;
+  --work:#c8e6c9;           /* trabalho - verde claro */
+  --off:#ffcdd2;            /* folga - vermelho claro */
+  --off-sun:#bbdefb;        /* folga domingo - azul claro */
+  --lunch:#fff3cd;          /* almoço - amarelo */
+  --dinner:#e1d5f0;         /* janta - roxo */
+  --shadow:0 2px 8px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 28px rgba(0,0,0,.16);
+  --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Roboto,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+input,select{font-family:inherit;font-size:14px}
+
+/* ===== Layout ===== */
+.app{display:flex;min-height:100vh}
+.sidebar{width:260px;background:linear-gradient(170deg,var(--primary-dark),var(--primary));color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;transition:transform .3s}
+.sidebar .brand{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;gap:12px}
+.sidebar .brand .logo{width:46px;height:46px;border-radius:12px;background:var(--accent);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex-shrink:0}
+.sidebar .brand h1{font-size:16px;font-weight:700;line-height:1.2}
+.sidebar .brand p{font-size:11px;opacity:.8;font-weight:400}
+.nav{flex:1;padding:16px 0;overflow-y:auto}
+.nav button{width:100%;background:transparent;color:#fff;text-align:left;padding:14px 22px;display:flex;align-items:center;gap:14px;font-size:14.5px;border-left:4px solid transparent;transition:.2s;opacity:.85}
+.nav button .ic{font-size:18px;width:22px;text-align:center}
+.nav button:hover{background:rgba(255,255,255,.1);opacity:1}
+.nav button.active{background:rgba(255,255,255,.16);border-left-color:var(--accent);opacity:1;font-weight:600}
+.sidebar .foot{padding:16px 20px;font-size:11px;opacity:.6;border-top:1px solid rgba(255,255,255,.15)}
+
+.main{flex:1;margin-left:260px;display:flex;flex-direction:column;min-width:0}
+.topbar{background:var(--surface);box-shadow:var(--shadow);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar h2{font-size:20px;color:var(--primary-dark)}
+.topbar .menu-toggle{display:none;background:var(--primary);color:#fff;border-radius:8px;width:40px;height:40px;font-size:20px}
+.content{padding:28px;flex:1}
+
+/* ===== Cards / Components ===== */
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:24px}
+.card h3{color:var(--primary-dark);font-size:17px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.grid{display:grid;gap:20px}
+.grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.grid.cols-2{grid-template-columns:repeat(2,1fr)}
+
+.stat{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;display:flex;align-items:center;gap:18px;border-left:5px solid var(--primary)}
+.stat .icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;background:rgba(139,0,0,.1);flex-shrink:0}
+.stat .num{font-size:30px;font-weight:800;color:var(--primary-dark);line-height:1}
+.stat .lbl{font-size:13px;color:var(--muted);margin-top:4px}
+
+.btn{background:var(--primary);color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+.btn:hover{background:var(--primary-dark)}
+.btn.secondary{background:#eceef2;color:var(--text)}
+.btn.secondary:hover{background:#dde0e6}
+.btn.gold{background:var(--accent);color:var(--primary-dark)}
+.btn.gold:hover{background:#c39e2c}
+.btn.danger{background:#dc3545}
+.btn.danger:hover{background:#b52a37}
+.btn.sm{padding:6px 12px;font-size:12.5px}
+.btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary)}
+.btn.ghost:hover{background:rgba(139,0,0,.06)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.form-row{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px}
+.field{flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600;color:var(--muted)}
+.field input,.field select{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;transition:.2s}
+.field input:focus,.field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(139,0,0,.1)}
+
+table.data{width:100%;border-collapse:collapse;font-size:14px}
+table.data th{background:var(--primary);color:#fff;padding:12px 14px;text-align:left;font-weight:600}
+table.data th:first-child{border-radius:8px 0 0 0}
+table.data th:last-child{border-radius:0 8px 0 0}
+table.data td{padding:11px 14px;border-bottom:1px solid var(--border)}
+table.data tr:last-child td{border-bottom:none}
+table.data tbody tr:hover{background:#faf7f7}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(139,0,0,.1);color:var(--primary-dark)}
+
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty .big{font-size:46px;margin-bottom:10px;opacity:.5}
+
+/* ===== Modal ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-lg);width:100%;max-width:480px;animation:pop .2s}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.modal .head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal .head h3{color:var(--primary-dark);font-size:17px}
+.modal .head .x{background:none;font-size:22px;color:var(--muted);width:32px;height:32px;border-radius:6px}
+.modal .head .x:hover{background:#f0f0f0}
+.modal .body{padding:22px}
+.modal .foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+
+/* ===== Toast ===== */
+.toast-wrap{position:fixed;top:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+.toast{background:#323232;color:#fff;padding:14px 20px;border-radius:8px;box-shadow:var(--shadow-lg);font-size:14px;display:flex;align-items:center;gap:10px;animation:slideIn .3s;min-width:240px}
+.toast.success{background:#2e7d32}
+.toast.error{background:#c62828}
+.toast.info{background:var(--primary)}
+@keyframes slideIn{from{transform:translateX(120%)}to{transform:translateX(0)}}
+
+/* ===== Steps ===== */
+.steps{display:flex;gap:0;margin-bottom:28px}
+.step{flex:1;text-align:center;position:relative;padding-bottom:12px}
+.step .circle{width:38px;height:38px;border-radius:50%;background:#e0e0e0;color:#888;display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 8px;transition:.3s;border:3px solid #e0e0e0}
+.step .txt{font-size:13px;color:var(--muted);font-weight:600}
+.step.active .circle{background:var(--primary);border-color:var(--primary);color:#fff}
+.step.done .circle{background:var(--accent);border-color:var(--accent);color:var(--primary-dark)}
+.step.active .txt,.step.done .txt{color:var(--primary-dark)}
+.step::after{content:'';position:absolute;top:19px;left:50%;width:100%;height:3px;background:#e0e0e0;z-index:-1}
+.step:last-child::after{display:none}
+.step.done::after{background:var(--accent)}
+
+/* ===== Calendar ===== */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.cal .dow{text-align:center;font-weight:700;font-size:12px;color:var(--muted);padding:6px 0}
+.cal .day{aspect-ratio:1;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:.15s;background:#fff;user-select:none}
+.cal .day:hover{border-color:var(--primary);background:#faf3f3}
+.cal .day.empty{border:none;cursor:default;background:transparent}
+.cal .day.sel{background:var(--accent);color:var(--primary-dark);font-weight:700;border-color:var(--accent)}
+.cal .day.sun{color:var(--primary)}
+
+/* ===== Schedule Table ===== */
+.sched-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+table.sched{border-collapse:collapse;font-size:12px;width:100%;min-width:900px}
+table.sched th,table.sched td{border:1px solid var(--border);text-align:center;padding:4px 3px;white-space:nowrap}
+table.sched th{background:var(--primary);color:#fff;font-weight:600;position:sticky;top:0}
+table.sched th.sun-h{background:var(--primary-dark)}
+table.sched td.name{text-align:left;font-weight:600;background:#f7f7f9;position:sticky;left:0;z-index:2;min-width:150px;padding-left:8px}
+table.sched th.name-h{position:sticky;left:0;z-index:3;min-width:150px;text-align:left;padding-left:8px}
+table.sched td.cell{cursor:pointer;font-weight:600;font-size:11px;transition:.1s}
+table.sched td.cell:hover{outline:2px solid var(--primary);outline-offset:-2px}
+table.sched td.hours{background:#fff8e1;font-weight:700;color:var(--primary-dark)}
+table.sched td.total{background:var(--accent);font-weight:800;color:var(--primary-dark)}
+.c-work{background:var(--work)}
+.c-off{background:var(--off)}
+.c-offsun{background:var(--off-sun)}
+.c-lunch{background:var(--lunch)}
+.c-dinner{background:var(--dinner)}
+.cell-sub{font-size:9px;display:block;opacity:.75;font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px}
+.legend .item{display:flex;align-items:center;gap:6px;font-size:12.5px}
+.legend .sw{width:18px;height:18px;border-radius:4px;border:1px solid rgba(0,0,0,.1)}
+.daycount{font-size:11px;font-weight:700;background:#eceef2}
+
+.helpbox{background:#fff8e1;border-left:4px solid var(--accent);padding:14px 18px;border-radius:8px;font-size:13.5px;margin-bottom:16px}
+.helpbox b{color:var(--primary-dark)}
+.tip{font-size:12.5px;color:var(--muted);margin-top:6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.toolbar .spacer{flex:1}
+.section-title{font-size:15px;font-weight:700;color:var(--primary-dark);margin:18px 0 10px}
+
+.emp-config{border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+.emp-config .ehead{font-weight:700;color:var(--primary-dark);margin-bottom:12px;font-size:14.5px}
+
+@media(max-width:900px){
+  .grid.cols-3,.grid.cols-4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .topbar .menu-toggle{display:flex;align-items:center;justify-content:center}
+  .grid.cols-3,.grid.cols-4,.grid.cols-2{grid-template-columns:1fr}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">DG</div>
+      <div>
+        <h1>Don Garcia</h1>
+        <p>Gestão de Escala</p>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-page="dashboard" class="active"><span class="ic">📊</span> Dashboard</button>
+      <button data-page="setores"><span class="ic">🏷️</span> Setores</button>
+      <button data-page="funcionarios"><span class="ic">👥</span> Funcionários</button>
+      <button data-page="gerar"><span class="ic">🗓️</span> Gerar Escala</button>
+      <button data-page="visualizar"><span class="ic">📋</span> Visualizar Escalas</button>
+    </nav>
+    <div class="foot">© Don Garcia • 100% Offline</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <h2 id="pageTitle">Dashboard</h2>
+      <div></div>
+    </header>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+
+/* ============================================================
+   GESTÃO DE ESCALA DON GARCIA
+   Sistema 100% offline - HTML/CSS/JS puro + localStorage
+   ============================================================ */
+
+/* ---------- Constantes ---------- */
+const DIAS_SEMANA = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+const DOW_ABBR = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']; // index = getDay()
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+// Jornadas (em horas)
+const HORAS_PADRAO = 7 + 20/60;   // 7h20
+const HORAS_CONTINUA = 10;        // 10h
+// Status de célula
+const ST_TRABALHO='trabalho', ST_FOLGA='folga', ST_FOLGA_DOM='folga_dom';
+
+/* ---------- Storage ---------- */
+const DB = {
+  KEYS:{set:'dg_setores',func:'dg_funcionarios',esc:'dg_escalas'},
+  get(k){try{return JSON.parse(localStorage.getItem(k))||[]}catch(e){return[]}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v))},
+  setores(){return this.get(this.KEYS.set)},
+  funcionarios(){return this.get(this.KEYS.func)},
+  escalas(){return this.get(this.KEYS.esc)},
+  saveSetores(v){this.set(this.KEYS.set,v)},
+  saveFuncionarios(v){this.set(this.KEYS.func,v)},
+  saveEscalas(v){this.set(this.KEYS.esc,v)}
+};
+const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- Toast ---------- */
+function toast(msg,type='info'){
+  const w=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className='toast '+type;
+  const ic = type==='success'?'✅':type==='error'?'⛔':'ℹ️';
+  t.innerHTML=`<span>${ic}</span><span>${msg}</span>`;
+  w.appendChild(t);
+  setTimeout(()=>{t.style.transition='.3s';t.style.opacity='0';t.style.transform='translateX(120%)';setTimeout(()=>t.remove(),300)},3000);
+}
+
+/* ---------- Modal ---------- */
+function openModal(title,bodyHTML,footHTML){
+  const box=document.getElementById('modalBox');
+  box.innerHTML=`<div class="head"><h3>${title}</h3><button class="x" onclick="closeModal()">×</button></div>
+    <div class="body">${bodyHTML}</div>
+    <div class="foot">${footHTML||''}</div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open')}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target.id==='modalOverlay')closeModal()});
+
+function confirmDialog(msg,onYes,yesLabel='Confirmar'){
+  openModal('Confirmação',`<p style="font-size:14.5px">${msg}</p>`,
+    `<button class="btn secondary" onclick="closeModal()">Cancelar</button>
+     <button class="btn danger" id="confirmYes">${yesLabel}</button>`);
+  document.getElementById('confirmYes').onclick=()=>{closeModal();onYes()};
+}
+
+/* ---------- Utilidades ---------- */
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function setorNome(id){const s=DB.setores().find(x=>x.id===id);return s?s.nome:'(removido)'}
+function diasNoMes(ano,mes){return new Date(ano,mes+1,0).getDate()} // mes 0-11
+// mapeia getDay() (0=Dom..6=Sab) para indice DIAS_SEMANA (0=Seg..6=Dom)
+function dowIndex(jsDay){return jsDay===0?6:jsDay-1}
+
+/* ---------- Navegação ---------- */
+const PAGES={
+  dashboard:{title:'Dashboard',render:renderDashboard},
+  setores:{title:'Cadastro de Setores',render:renderSetores},
+  funcionarios:{title:'Cadastro de Funcionários',render:renderFuncionarios},
+  gerar:{title:'Gerar Escala',render:renderGerar},
+  visualizar:{title:'Visualizar Escalas',render:renderVisualizar}
+};
+let currentPage='dashboard';
+function navigate(page){
+  currentPage=page;
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  document.getElementById('pageTitle').textContent=PAGES[page].title;
+  document.getElementById('content').innerHTML='';
+  PAGES[page].render();
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0,0);
+}
+document.getElementById('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-page]');if(b)navigate(b.dataset.page);
+});
+document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function renderDashboard(){
+  const setores=DB.setores(), funcs=DB.funcionarios(), escalas=DB.escalas();
+  const c=document.getElementById('content');
+  // estatísticas por setor
+  const porSetor=setores.map(s=>({nome:s.nome,n:funcs.filter(f=>f.setorId===s.id).length}));
+  c.innerHTML=`
+    <div class="grid cols-3" style="margin-bottom:24px">
+      <div class="stat"><div class="icon">🏷️</div><div><div class="num">${setores.length}</div><div class="lbl">Setores cadastrados</div></div></div>
+      <div class="stat" style="border-left-color:var(--accent)"><div class="icon" style="background:rgba(212,175,55,.18)">👥</div><div><div class="num">${funcs.length}</div><div class="lbl">Funcionários</div></div></div>
+      <div class="stat" style="border-left-color:#2e7d32"><div class="icon" style="background:rgba(46,125,50,.15)">🗓️</div><div><div class="num">${escalas.length}</div><div class="lbl">Escalas geradas</div></div></div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>⏱️ Tipos de Jornada</h3>
+        <div class="helpbox"><b>Jornada Padrão — 7h20</b><br>7 horas e 20 minutos de trabalho + 30 minutos de intervalo. É o turno normal no regime <b>6x1</b> (6 dias de trabalho por 1 de folga).</div>
+        <div class="helpbox" style="border-left-color:var(--primary)"><b>Jornada Contínua — 10h</b><br>10 horas de trabalho + 2 horas de intervalo. Usada em dias de maior movimento. Marque estes dias no calendário durante a geração da escala.</div>
+        <div class="tip">Regra: todo colaborador tem <b>1 folga semanal fixa</b> e ao menos <b>1 domingo de folga por mês</b> garantido.</div>
+      </div>
+      <div class="card">
+        <h3>📈 Funcionários por Setor</h3>
+        ${porSetor.length? `<table class="data"><thead><tr><th>Setor</th><th style="text-align:right">Funcionários</th></tr></thead><tbody>
+          ${porSetor.map(p=>`<tr><td>${esc(p.nome)}</td><td style="text-align:right"><span class="badge">${p.n}</span></td></tr>`).join('')}
+        </tbody></table>`
+        : `<div class="empty"><div class="big">📭</div>Nenhum setor cadastrado ainda.<br><button class="btn" style="margin-top:14px" onclick="navigate('setores')">Cadastrar Setor</button></div>`}
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🚀 Atalhos Rápidos</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn" onclick="navigate('setores')">🏷️ Gerenciar Setores</button>
+        <button class="btn" onclick="navigate('funcionarios')">👥 Gerenciar Funcionários</button>
+        <button class="btn gold" onclick="navigate('gerar')">🗓️ Gerar Nova Escala</button>
+        <button class="btn secondary" onclick="navigate('visualizar')">📋 Ver Escalas Salvas</button>
+      </div>
+    </div>
+  `;
+}
+
+
+/* ============================================================
+   SETORES (CRUD)
+   ============================================================ */
+function renderSetores(){
+  const setores=DB.setores(), funcs=DB.funcionarios();
+  const c=document.getElementById('content');
+  c.innerHTML=`
+    <div class="card">
+      <div class="toolbar">
+        <h3 style="margin:0">🏷️ Setores Cadastrados</h3>
+        <div class="spacer"></div>
+        <button class="btn" onclick="modalSetor()">➕ Novo Setor</button>
+      </div>
+      ${setores.length? `<table class="data"><thead><tr><th>Setor</th><th>Funcionários</th><th style="width:170px;text-align:right">Ações</th></tr></thead><tbody>
+        ${setores.map(s=>{const n=funcs.filter(f=>f.setorId===s.id).length;return `<tr>
+          <td><b>${esc(s.nome)}</b></td>
+          <td><span class="badge">${n}</span></td>
+          <td style="text-align:right">
+            <button class="btn secondary sm" onclick="modalSetor('${s.id}')">✏️ Editar</button>
+            <button class="btn danger sm" onclick="removerSetor('${s.id}')">🗑️ Remover</button>
+          </td></tr>`}).join('')}
+      </tbody></table>`
+      : `<div class="empty"><div class="big">🏷️</div>Nenhum setor cadastrado.<br>Comece criando o primeiro setor (ex.: Cozinha, Salão, Bar).</div>`}
+    </div>`;
+}
+function modalSetor(id){
+  const s=id?DB.setores().find(x=>x.id===id):null;
+  openModal(s?'Editar Setor':'Novo Setor',
+    `<div class="field"><label>Nome do Setor</label>
+      <input id="setNome" placeholder="Ex.: Cozinha, Salão, Bar, Caixa" value="${s?esc(s.nome):''}" maxlength="40"></div>`,
+    `<button class="btn secondary" onclick="closeModal()">Cancelar</button>
+     <button class="btn" id="setSave">💾 Salvar</button>`);
+  setTimeout(()=>document.getElementById('setNome').focus(),50);
+  document.getElementById('setSave').onclick=()=>{
+    const nome=document.getElementById('setNome').value.trim();
+    if(!nome){toast('Informe o nome do setor.','error');return}
+    let arr=DB.setores();
+    if(arr.some(x=>x.nome.toLowerCase()===nome.toLowerCase()&&x.id!==id)){toast('Já existe um setor com este nome.','error');return}
+    if(s){s.nome=nome;arr=arr.map(x=>x.id===id?s:x)}
+    else arr.push({id:uid(),nome});
+    DB.saveSetores(arr);closeModal();renderSetores();
+    toast(s?'Setor atualizado!':'Setor criado!','success');
+  };
+}
+function removerSetor(id){
+  const funcs=DB.funcionarios().filter(f=>f.setorId===id);
+  const escs=DB.escalas().filter(e=>e.setorId===id);
+  let aviso='Tem certeza que deseja remover este setor?';
+  if(funcs.length||escs.length){
+    aviso+=`<br><br><b style="color:#c62828">Atenção:</b> serão removidos também <b>${funcs.length}</b> funcionário(s) e <b>${escs.length}</b> escala(s) vinculados.`;
+  }
+  confirmDialog(aviso,()=>{
+    DB.saveSetores(DB.setores().filter(s=>s.id!==id));
+    DB.saveFuncionarios(DB.funcionarios().filter(f=>f.setorId!==id));
+    DB.saveEscalas(DB.escalas().filter(e=>e.setorId!==id));
+    renderSetores();toast('Setor removido.','success');
+  },'Remover');
+}
+
+
+/* ============================================================
+   FUNCIONÁRIOS (CRUD + filtro por setor)
+   ============================================================ */
+let funcFiltroSetor='';
+function renderFuncionarios(){
+  const setores=DB.setores();
+  const c=document.getElementById('content');
+  if(!setores.length){
+    c.innerHTML=`<div class="card"><div class="empty"><div class="big">⚠️</div>Cadastre ao menos um <b>setor</b> antes de adicionar funcionários.<br><button class="btn" style="margin-top:14px" onclick="navigate('setores')">Ir para Setores</button></div></div>`;
+    return;
+  }
+  let funcs=DB.funcionarios();
+  if(funcFiltroSetor) funcs=funcs.filter(f=>f.setorId===funcFiltroSetor);
+  c.innerHTML=`
+    <div class="card">
+      <div class="toolbar">
+        <h3 style="margin:0">👥 Funcionários</h3>
+        <div class="spacer"></div>
+        <div class="field" style="min-width:200px;margin:0">
+          <select id="filtroSetor" onchange="funcFiltroSetor=this.value;renderFuncionarios()">
+            <option value="">Todos os setores</option>
+            ${setores.map(s=>`<option value="${s.id}" ${funcFiltroSetor===s.id?'selected':''}>${esc(s.nome)}</option>`).join('')}
+          </select>
+        </div>
+        <button class="btn" onclick="modalFunc()">➕ Novo Funcionário</button>
+      </div>
+      ${funcs.length? `<table class="data"><thead><tr><th>Nome</th><th>Setor</th><th>Turno Predominante</th><th style="width:170px;text-align:right">Ações</th></tr></thead><tbody>
+        ${funcs.map(f=>`<tr>
+          <td><b>${esc(f.nome)}</b></td>
+          <td>${esc(setorNome(f.setorId))}</td>
+          <td><span class="badge">${esc(f.turno)}</span></td>
+          <td style="text-align:right">
+            <button class="btn secondary sm" onclick="modalFunc('${f.id}')">✏️ Editar</button>
+            <button class="btn danger sm" onclick="removerFunc('${f.id}')">🗑️ Remover</button>
+          </td></tr>`).join('')}
+      </tbody></table>`
+      : `<div class="empty"><div class="big">👥</div>Nenhum funcionário ${funcFiltroSetor?'neste setor':'cadastrado'}.</div>`}
+    </div>`;
+}
+function modalFunc(id){
+  const setores=DB.setores();
+  const f=id?DB.funcionarios().find(x=>x.id===id):null;
+  openModal(f?'Editar Funcionário':'Novo Funcionário',
+    `<div class="field" style="margin-bottom:14px"><label>Nome completo</label>
+      <input id="fNome" placeholder="Nome do colaborador" value="${f?esc(f.nome):''}" maxlength="60"></div>
+     <div class="field" style="margin-bottom:14px"><label>Setor</label>
+      <select id="fSetor">${setores.map(s=>`<option value="${s.id}" ${f&&f.setorId===s.id?'selected':''}>${esc(s.nome)}</option>`).join('')}</select></div>
+     <div class="field"><label>Turno predominante</label>
+      <input id="fTurno" placeholder='Ex.: Almoço, Janta, Integral' value="${f?esc(f.turno):''}" maxlength="30">
+      <span class="tip">Este será o turno pré-preenchido ao gerar a escala (pode ser ajustado depois).</span></div>`,
+    `<button class="btn secondary" onclick="closeModal()">Cancelar</button>
+     <button class="btn" id="fSave">💾 Salvar</button>`);
+  setTimeout(()=>document.getElementById('fNome').focus(),50);
+  document.getElementById('fSave').onclick=()=>{
+    const nome=document.getElementById('fNome').value.trim();
+    const setorId=document.getElementById('fSetor').value;
+    const turno=document.getElementById('fTurno').value.trim()||'Almoço';
+    if(!nome){toast('Informe o nome.','error');return}
+    if(!setorId){toast('Selecione o setor.','error');return}
+    let arr=DB.funcionarios();
+    if(f){Object.assign(f,{nome,setorId,turno});arr=arr.map(x=>x.id===id?f:x)}
+    else arr.push({id:uid(),nome,setorId,turno});
+    DB.saveFuncionarios(arr);closeModal();renderFuncionarios();
+    toast(f?'Funcionário atualizado!':'Funcionário criado!','success');
+  };
+}
+function removerFunc(id){
+  confirmDialog('Remover este funcionário? Ele continuará aparecendo em escalas já salvas.',()=>{
+    DB.saveFuncionarios(DB.funcionarios().filter(f=>f.id!==id));
+    renderFuncionarios();toast('Funcionário removido.','success');
+  },'Remover');
+}
+
+
+/* ============================================================
+   GERAR ESCALA (3 passos)
+   ============================================================ */
+const hoje=new Date();
+let gerState={
+  step:1,
+  setorId:'', ano:hoje.getFullYear(), mes:hoje.getMonth(),
+  configs:{},   // funcId -> {turno, folgaSemanal, domingoFolga, dias10h:[]}
+  escala:null,  // estrutura gerada/editável
+  editId:null   // se editando escala existente
+};
+
+function renderGerar(){
+  // se veio de "editar", mantém; senão reseta para passo 1 limpo apenas se não há escala em progresso
+  drawGerar();
+}
+function resetGer(){
+  gerState={step:1,setorId:'',ano:hoje.getFullYear(),mes:hoje.getMonth(),configs:{},escala:null,editId:null};
+  drawGerar();
+}
+function stepsBar(){
+  const labels=['Configuração','Parâmetros','Ajuste & Salvar'];
+  return `<div class="steps">${labels.map((l,i)=>{const n=i+1;const cls=gerState.step===n?'active':(gerState.step>n?'done':'');return `<div class="step ${cls}"><div class="circle">${gerState.step>n?'✓':n}</div><div class="txt">${l}</div></div>`}).join('')}</div>`;
+}
+function drawGerar(){
+  const c=document.getElementById('content');
+  c.innerHTML=`<div class="card">${stepsBar()}<div id="stepBody"></div></div>`;
+  if(gerState.step===1) drawStep1();
+  else if(gerState.step===2) drawStep2();
+  else drawStep3();
+}
+
+/* ---------- PASSO 1 ---------- */
+function drawStep1(){
+  const setores=DB.setores();
+  const b=document.getElementById('stepBody');
+  if(!setores.length){b.innerHTML=`<div class="empty"><div class="big">⚠️</div>Cadastre setores e funcionários antes de gerar uma escala.</div>`;return}
+  const anos=[];for(let a=hoje.getFullYear()-1;a<=hoje.getFullYear()+2;a++)anos.push(a);
+  b.innerHTML=`
+    <div class="helpbox">📌 <b>Passo 1:</b> escolha o setor e o período (mês/ano) da escala que deseja gerar.</div>
+    <div class="form-row">
+      <div class="field"><label>Setor</label>
+        <select id="g1Setor">${setores.map(s=>`<option value="${s.id}" ${gerState.setorId===s.id?'selected':''}>${esc(s.nome)}</option>`).join('')}</select></div>
+      <div class="field"><label>Mês</label>
+        <select id="g1Mes">${MESES.map((m,i)=>`<option value="${i}" ${gerState.mes===i?'selected':''}>${m}</option>`).join('')}</select></div>
+      <div class="field"><label>Ano</label>
+        <select id="g1Ano">${anos.map(a=>`<option value="${a}" ${gerState.ano===a?'selected':''}>${a}</option>`).join('')}</select></div>
+    </div>
+    <div id="g1Info"></div>
+    <div class="toolbar" style="margin-top:20px">
+      <button class="btn secondary" onclick="resetGer()">↺ Limpar</button>
+      <div class="spacer"></div>
+      <button class="btn" id="g1Next">Próximo ➜</button>
+    </div>`;
+  const upd=()=>{
+    const sid=document.getElementById('g1Setor').value;
+    const n=DB.funcionarios().filter(f=>f.setorId===sid).length;
+    document.getElementById('g1Info').innerHTML=`<div class="tip">👥 <b>${n}</b> funcionário(s) neste setor serão incluídos na escala.</div>`;
+  };
+  document.getElementById('g1Setor').onchange=upd;upd();
+  document.getElementById('g1Next').onclick=()=>{
+    gerState.setorId=document.getElementById('g1Setor').value;
+    gerState.mes=+document.getElementById('g1Mes').value;
+    gerState.ano=+document.getElementById('g1Ano').value;
+    const funcs=DB.funcionarios().filter(f=>f.setorId===gerState.setorId);
+    if(!funcs.length){toast('Este setor não possui funcionários.','error');return}
+    // inicializa configs (mantém se já existirem)
+    funcs.forEach(f=>{
+      if(!gerState.configs[f.id]) gerState.configs[f.id]={turno:f.turno,folgaSemanal:6,domingoFolga:'auto',dias10h:[]};
+    });
+    gerState.step=2;drawGerar();
+  };
+}
+
+
+/* ---------- PASSO 2 ---------- */
+function drawStep2(){
+  const funcs=DB.funcionarios().filter(f=>f.setorId===gerState.setorId);
+  const b=document.getElementById('stepBody');
+  const N=diasNoMes(gerState.ano,gerState.mes);
+  b.innerHTML=`
+    <div class="helpbox">📌 <b>Passo 2:</b> defina os parâmetros de cada colaborador para <b>${MESES[gerState.mes]} ${gerState.ano}</b>.<br>
+    Configure o turno, o dia da folga semanal, qual domingo será de folga e marque no calendário os <b>dias de jornada contínua (10h)</b>.</div>
+    <div id="empList">
+      ${funcs.map(f=>empConfigCard(f,N)).join('')}
+    </div>
+    <div class="toolbar" style="margin-top:20px">
+      <button class="btn secondary" onclick="gerState.step=1;drawGerar()">⬅ Voltar</button>
+      <div class="spacer"></div>
+      <button class="btn gold" id="g2Next">⚙️ Gerar Escala ➜</button>
+    </div>`;
+  // bind events
+  funcs.forEach(f=>{
+    const cfg=gerState.configs[f.id];
+    document.getElementById('turno_'+f.id).onchange=e=>cfg.turno=e.target.value;
+    document.getElementById('folga_'+f.id).onchange=e=>cfg.folgaSemanal=+e.target.value;
+    document.getElementById('dom_'+f.id).onchange=e=>cfg.domingoFolga=e.target.value;
+  });
+  document.getElementById('g2Next').onclick=()=>{gerarEscala();gerState.step=3;drawGerar()};
+}
+function empConfigCard(f,N){
+  const cfg=gerState.configs[f.id];
+  return `<div class="emp-config">
+    <div class="ehead">👤 ${esc(f.nome)} <span class="badge" style="font-weight:500">${esc(setorNome(f.setorId))}</span></div>
+    <div class="form-row">
+      <div class="field"><label>Turno</label>
+        <input id="turno_${f.id}" value="${esc(cfg.turno)}" maxlength="30"></div>
+      <div class="field"><label>Folga semanal</label>
+        <select id="folga_${f.id}">${DIAS_SEMANA.map((d,i)=>`<option value="${i}" ${cfg.folgaSemanal===i?'selected':''}>${d}</option>`).join('')}</select></div>
+      <div class="field"><label>Domingo de folga</label>
+        <select id="dom_${f.id}">
+          <option value="auto" ${cfg.domingoFolga==='auto'?'selected':''}>Automático</option>
+          <option value="1" ${cfg.domingoFolga==='1'?'selected':''}>1º Domingo</option>
+          <option value="2" ${cfg.domingoFolga==='2'?'selected':''}>2º Domingo</option>
+          <option value="3" ${cfg.domingoFolga==='3'?'selected':''}>3º Domingo</option>
+          <option value="4" ${cfg.domingoFolga==='4'?'selected':''}>4º Domingo</option>
+          <option value="5" ${cfg.domingoFolga==='5'?'selected':''}>5º Domingo</option>
+        </select></div>
+    </div>
+    <label style="font-size:13px;font-weight:600;color:var(--muted)">📅 Dias de jornada contínua (10h) — clique para marcar:</label>
+    ${calendarHTML(f.id,N)}
+  </div>`;
+}
+function calendarHTML(funcId,N){
+  const cfg=gerState.configs[funcId];
+  let cells='';
+  // cabeçalho dias da semana (Seg..Dom)
+  DIAS_SEMANA.forEach(d=>cells+=`<div class="dow">${d.slice(0,3)}</div>`);
+  const firstJs=new Date(gerState.ano,gerState.mes,1).getDay();
+  const lead=dowIndex(firstJs);
+  for(let i=0;i<lead;i++)cells+=`<div class="day empty"></div>`;
+  for(let d=1;d<=N;d++){
+    const js=new Date(gerState.ano,gerState.mes,d).getDay();
+    const sel=cfg.dias10h.includes(d)?'sel':'';
+    const sun=js===0?'sun':'';
+    cells+=`<div class="day ${sel} ${sun}" onclick="toggle10h('${funcId}',${d},this)">${d}</div>`;
+  }
+  return `<div class="cal" id="cal_${funcId}">${cells}</div>`;
+}
+function toggle10h(funcId,d,el){
+  const cfg=gerState.configs[funcId];
+  const i=cfg.dias10h.indexOf(d);
+  if(i>=0){cfg.dias10h.splice(i,1);el.classList.remove('sel')}
+  else{cfg.dias10h.push(d);el.classList.add('sel')}
+}
+
+
+/* ---------- ALGORITMO DE GERAÇÃO ---------- */
+function weekIndex(ano,mes,d){
+  // semanas Seg->Dom; retorna 0-based
+  const firstJs=new Date(ano,mes,1).getDay();
+  const lead=dowIndex(firstJs);
+  return Math.floor((d-1+lead)/7);
+}
+function numSemanas(ano,mes){
+  const N=diasNoMes(ano,mes);
+  return weekIndex(ano,mes,N)+1;
+}
+function gerarEscala(){
+  const ano=gerState.ano, mes=gerState.mes, N=diasNoMes(ano,mes);
+  const funcs=DB.funcionarios().filter(f=>f.setorId===gerState.setorId);
+  // domingos do mês
+  const domingos=[];
+  for(let d=1;d<=N;d++) if(new Date(ano,mes,d).getDay()===0) domingos.push(d);
+  const dados={};
+  funcs.forEach(f=>{
+    const cfg=gerState.configs[f.id];
+    // determina domingo de folga alvo
+    let domAlvo=null;
+    if(cfg.folgaSemanal!==6){ // se folga semanal não é domingo, garante 1 domingo
+      if(cfg.domingoFolga==='auto'){
+        domAlvo=domingos[Math.min(1,domingos.length-1)]; // 2º domingo (ou 1º se só houver 1)
+      }else{
+        const idx=parseInt(cfg.domingoFolga,10)-1;
+        domAlvo=domingos[idx]!=null?domingos[idx]:domingos[domingos.length-1];
+      }
+    }
+    const dias={};
+    for(let d=1;d<=N;d++){
+      const js=new Date(ano,mes,d).getDay();
+      const dowIdx=dowIndex(js);
+      let status=ST_TRABALHO;
+      if(dowIdx===cfg.folgaSemanal) status=ST_FOLGA;
+      if(js===0 && status!==ST_FOLGA && d===domAlvo) status=ST_FOLGA_DOM;
+      const jornada=cfg.dias10h.includes(d)?'continua':'padrao';
+      dias[d]={status,turno:cfg.turno,jornada};
+    }
+    dados[f.id]={funcId:f.id,nome:f.nome,turnoPredominante:f.turno,dias};
+  });
+  gerState.escala={
+    id:gerState.editId||uid(),
+    setorId:gerState.setorId, setorNome:setorNome(gerState.setorId),
+    ano,mes,
+    ordem:funcs.map(f=>f.id),
+    dados,
+    criadoEm:new Date().toISOString()
+  };
+}
+
+/* ---------- CÁLCULO DE HORAS ---------- */
+function horasDia(cell){
+  if(cell.status!==ST_TRABALHO) return 0;
+  return cell.jornada==='continua'?HORAS_CONTINUA:HORAS_PADRAO;
+}
+function horasSemanais(reg,ano,mes){
+  const N=diasNoMes(ano,mes);
+  const nS=numSemanas(ano,mes);
+  const sem=new Array(nS).fill(0);
+  for(let d=1;d<=N;d++){
+    const w=weekIndex(ano,mes,d);
+    sem[w]+=horasDia(reg.dias[d]);
+  }
+  return sem;
+}
+function fmtH(h){
+  if(!h||h<=0) return '0';
+  const totalMin=Math.round(h*60);
+  const hh=Math.floor(totalMin/60), mm=totalMin%60;
+  return mm? `${hh}h${String(mm).padStart(2,'0')}` : `${hh}h`;
+}
+
+
+/* ---------- RENDER DA TABELA (compartilhado passo3 / visualizar) ---------- */
+function turnoColorClass(turno){
+  const t=(turno||'').toLowerCase();
+  if(t.includes('almo')) return 'c-lunch';
+  if(t.includes('jant')||t.includes('noite')) return 'c-dinner';
+  return 'c-work';
+}
+function cellClass(cell){
+  if(cell.status===ST_FOLGA) return 'c-off';
+  if(cell.status===ST_FOLGA_DOM) return 'c-offsun';
+  return turnoColorClass(cell.turno);
+}
+function cellMain(cell){
+  if(cell.status===ST_FOLGA) return 'Folga';
+  if(cell.status===ST_FOLGA_DOM) return 'Folga D';
+  return cell.jornada==='continua'?'10h':'7h20';
+}
+function cellSub(cell){
+  if(cell.status!==ST_TRABALHO) return '';
+  return esc(cell.turno);
+}
+function buildSchedTable(escala,editable){
+  const {ano,mes}=escala, N=diasNoMes(ano,mes), nS=numSemanas(ano,mes);
+  let head=`<th class="name-h">Colaborador</th>`;
+  for(let d=1;d<=N;d++){
+    const js=new Date(ano,mes,d).getDay();
+    head+=`<th class="${js===0?'sun-h':''}">${d}<br><span style="font-weight:400;font-size:10px">${DOW_ABBR[js]}</span></th>`;
+  }
+  for(let w=0;w<nS;w++) head+=`<th>Sem ${w+1}</th>`;
+  head+=`<th>Total</th>`;
+
+  // contagem trabalhando por dia
+  const countDia=new Array(N+1).fill(0);
+  let rows='';
+  escala.ordem.forEach(fid=>{
+    const reg=escala.dados[fid];if(!reg)return;
+    const sem=horasSemanais(reg,ano,mes);
+    let r=`<td class="name">${esc(reg.nome)}</td>`;
+    for(let d=1;d<=N;d++){
+      const cell=reg.dias[d];
+      if(cell.status===ST_TRABALHO) countDia[d]++;
+      const oc=editable?`onclick="editCell('${fid}',${d})"`:'';
+      r+=`<td class="cell ${cellClass(cell)}" ${oc} title="Dia ${d}">${cellMain(cell)}<span class="cell-sub">${cellSub(cell)}</span></td>`;
+    }
+    sem.forEach(h=>r+=`<td class="hours">${fmtH(h)}</td>`);
+    const total=sem.reduce((a,b)=>a+b,0);
+    r+=`<td class="total">${fmtH(total)}</td>`;
+    rows+=`<tr>${r}</tr>`;
+  });
+  // linha de contagem
+  let countRow=`<td class="name daycount">👥 Trabalhando</td>`;
+  for(let d=1;d<=N;d++) countRow+=`<td class="daycount">${countDia[d]}</td>`;
+  for(let w=0;w<nS;w++) countRow+=`<td class="daycount"></td>`;
+  countRow+=`<td class="daycount"></td>`;
+
+  return `<div class="sched-wrap"><table class="sched">
+    <thead><tr>${head}</tr></thead>
+    <tbody>${rows}<tr>${countRow}</tr></tbody>
+  </table></div>${legendHTML()}`;
+}
+function legendHTML(){
+  return `<div class="legend">
+    <div class="item"><span class="sw c-lunch"></span> Almoço (trabalho)</div>
+    <div class="item"><span class="sw c-dinner"></span> Janta (trabalho)</div>
+    <div class="item"><span class="sw c-work"></span> Outro turno (trabalho)</div>
+    <div class="item"><span class="sw c-off"></span> Folga semanal</div>
+    <div class="item"><span class="sw c-offsun"></span> Folga domingo</div>
+    <div class="item"><b>7h20</b> = jornada padrão</div>
+    <div class="item"><b>10h</b> = jornada contínua</div>
+  </div>`;
+}
+
+/* ---------- PASSO 3 (edição) ---------- */
+function drawStep3(){
+  const b=document.getElementById('stepBody');
+  const e=gerState.escala;
+  b.innerHTML=`
+    <div class="helpbox">📌 <b>Passo 3:</b> escala de <b>${esc(e.setorNome)}</b> — <b>${MESES[e.mes]} ${e.ano}</b>.<br>
+    Clique em qualquer célula para ajustar status (Trabalho / Folga / Folga Domingo), turno (Almoço ↔ Janta) e jornada (7h20 ↔ 10h).</div>
+    <div id="schedArea">${buildSchedTable(e,true)}</div>
+    <div class="toolbar" style="margin-top:20px">
+      <button class="btn secondary" onclick="gerState.step=2;drawGerar()">⬅ Voltar</button>
+      <div class="spacer"></div>
+      <button class="btn gold" id="g3Save">💾 Salvar Escala</button>
+    </div>`;
+  document.getElementById('g3Save').onclick=salvarEscala;
+}
+function refreshStep3(){document.getElementById('schedArea').innerHTML=buildSchedTable(gerState.escala,true)}
+
+function editCell(fid,d){
+  const cell=gerState.escala.dados[fid].dias[d];
+  const seg=(st,lbl,active)=>`<button class="btn ${active?'':'secondary'} sm" onclick="setCellProp('${fid}',${d},'status','${st}')">${lbl}</button>`;
+  const trn=(val,lbl,active)=>`<button class="btn ${active?'':'secondary'} sm" onclick="setCellProp('${fid}',${d},'turno','${val}')">${lbl}</button>`;
+  const jor=(val,lbl,active)=>`<button class="btn ${active?'':'secondary'} sm" onclick="setCellProp('${fid}',${d},'jornada','${val}')">${lbl}</button>`;
+  openModal(`Dia ${d} — ${esc(gerState.escala.dados[fid].nome)}`,
+    `<div class="section-title" style="margin-top:0">Status</div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap">
+       ${seg(ST_TRABALHO,'💼 Trabalho',cell.status===ST_TRABALHO)}
+       ${seg(ST_FOLGA,'🏖️ Folga',cell.status===ST_FOLGA)}
+       ${seg(ST_FOLGA_DOM,'☀️ Folga Domingo',cell.status===ST_FOLGA_DOM)}
+     </div>
+     <div class="section-title">Turno</div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+       ${trn('Almoço','Almoço',(cell.turno||'').toLowerCase().includes('almo'))}
+       ${trn('Janta','Janta',(cell.turno||'').toLowerCase().includes('jant'))}
+       <input id="turnoLivre" placeholder="Outro..." value="${esc(cell.turno)}" style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;width:120px">
+       <button class="btn sm" onclick="setCellProp('${fid}',${d},'turno',document.getElementById('turnoLivre').value)">OK</button>
+     </div>
+     <div class="section-title">Jornada</div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap">
+       ${jor('padrao','7h20 (padrão)',cell.jornada==='padrao')}
+       ${jor('continua','10h (contínua)',cell.jornada==='continua')}
+     </div>`,
+    `<button class="btn" onclick="closeModal()">Concluir</button>`);
+}
+function setCellProp(fid,d,prop,val){
+  gerState.escala.dados[fid].dias[d][prop]=val;
+  refreshStep3();
+  // reabrir modal atualizado
+  editCell(fid,d);
+}
+
+
+/* ---------- SALVAR ESCALA ---------- */
+function salvarEscala(){
+  const e=gerState.escala;
+  let arr=DB.escalas();
+  const existing=arr.findIndex(x=>x.id===e.id);
+  // verifica duplicidade (mesmo setor/mes/ano) quando é nova
+  if(existing<0){
+    const dup=arr.find(x=>x.setorId===e.setorId&&x.ano===e.ano&&x.mes===e.mes);
+    if(dup){
+      confirmDialog(`Já existe uma escala para <b>${esc(e.setorNome)}</b> em <b>${MESES[e.mes]} ${e.ano}</b>. Deseja substituí-la?`,()=>{
+        e.id=dup.id;
+        arr=arr.map(x=>x.id===dup.id?e:x);
+        DB.saveEscalas(arr);finalizarSalvar();
+      },'Substituir');
+      return;
+    }
+    arr.push(e);
+  }else{
+    arr[existing]=e;
+  }
+  DB.saveEscalas(arr);finalizarSalvar();
+}
+function finalizarSalvar(){
+  toast('Escala salva com sucesso!','success');
+  const id=gerState.escala.id;
+  resetGer();
+  navigate('visualizar');
+  setTimeout(()=>abrirEscala(id),100);
+}
+
+/* ---------- EDITAR ESCALA EXISTENTE ---------- */
+function editarEscala(id){
+  const e=DB.escalas().find(x=>x.id===id);if(!e)return;
+  gerState={
+    step:3,
+    setorId:e.setorId, ano:e.ano, mes:e.mes,
+    configs:{}, editId:e.id,
+    escala:JSON.parse(JSON.stringify(e))
+  };
+  // garante setorNome atualizado
+  gerState.escala.setorNome=setorNome(e.setorId);
+  navigate('gerar');
+}
+
+/* ============================================================
+   VISUALIZAR ESCALAS
+   ============================================================ */
+let visualAbertaId=null;
+function renderVisualizar(){
+  const escalas=DB.escalas().slice().sort((a,b)=> (b.ano-a.ano)||(b.mes-a.mes)|| (b.criadoEm>a.criadoEm?1:-1));
+  const c=document.getElementById('content');
+  if(!escalas.length){
+    c.innerHTML=`<div class="card"><div class="empty"><div class="big">📋</div>Nenhuma escala salva ainda.<br><button class="btn gold" style="margin-top:14px" onclick="navigate('gerar')">🗓️ Gerar primeira escala</button></div></div>`;
+    return;
+  }
+  c.innerHTML=`
+    <div class="card">
+      <h3>📋 Escalas Salvas</h3>
+      <table class="data"><thead><tr><th>Setor</th><th>Período</th><th>Colaboradores</th><th>Criada em</th><th style="text-align:right;width:280px">Ações</th></tr></thead><tbody>
+        ${escalas.map(e=>`<tr>
+          <td><b>${esc(e.setorNome||setorNome(e.setorId))}</b></td>
+          <td>${MESES[e.mes]} ${e.ano}</td>
+          <td><span class="badge">${e.ordem.length}</span></td>
+          <td>${new Date(e.criadoEm).toLocaleDateString('pt-BR')}</td>
+          <td style="text-align:right">
+            <button class="btn sm" onclick="abrirEscala('${e.id}')">👁️ Ver</button>
+            <button class="btn secondary sm" onclick="editarEscala('${e.id}')">✏️ Editar</button>
+            <button class="btn danger sm" onclick="removerEscala('${e.id}')">🗑️</button>
+          </td></tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div id="visualArea"></div>`;
+  if(visualAbertaId && escalas.some(e=>e.id===visualAbertaId)) abrirEscala(visualAbertaId);
+}
+function removerEscala(id){
+  confirmDialog('Remover esta escala salva?',()=>{
+    DB.saveEscalas(DB.escalas().filter(e=>e.id!==id));
+    if(visualAbertaId===id) visualAbertaId=null;
+    renderVisualizar();toast('Escala removida.','success');
+  },'Remover');
+}
+function abrirEscala(id){
+  const e=DB.escalas().find(x=>x.id===id);if(!e)return;
+  visualAbertaId=id;
+  // estatísticas
+  let totalHoras=0, totalFolgas=0, totalFolgaDom=0;
+  const N=diasNoMes(e.ano,e.mes);
+  e.ordem.forEach(fid=>{const reg=e.dados[fid];if(!reg)return;
+    for(let d=1;d<=N;d++){const cl=reg.dias[d];totalHoras+=horasDia(cl);if(cl.status===ST_FOLGA)totalFolgas++;if(cl.status===ST_FOLGA_DOM)totalFolgaDom++}
+  });
+  const area=document.getElementById('visualArea');
+  area.innerHTML=`
+    <div class="card">
+      <div class="toolbar">
+        <h3 style="margin:0">${esc(e.setorNome||setorNome(e.setorId))} — ${MESES[e.mes]} ${e.ano}</h3>
+        <div class="spacer"></div>
+        <button class="btn secondary" onclick="editarEscala('${e.id}')">✏️ Editar</button>
+        <button class="btn gold" onclick="exportarPDF('${e.id}')">📄 Exportar PDF</button>
+      </div>
+      <div class="grid cols-4" style="margin-bottom:18px">
+        <div class="stat" style="padding:14px"><div class="icon" style="width:42px;height:42px;font-size:20px">⏱️</div><div><div class="num" style="font-size:22px">${fmtH(totalHoras)}</div><div class="lbl">Total de horas</div></div></div>
+        <div class="stat" style="padding:14px;border-left-color:var(--accent)"><div class="icon" style="width:42px;height:42px;font-size:20px;background:rgba(212,175,55,.18)">👥</div><div><div class="num" style="font-size:22px">${e.ordem.length}</div><div class="lbl">Colaboradores</div></div></div>
+        <div class="stat" style="padding:14px;border-left-color:#c62828"><div class="icon" style="width:42px;height:42px;font-size:20px;background:rgba(198,40,40,.12)">🏖️</div><div><div class="num" style="font-size:22px">${totalFolgas}</div><div class="lbl">Folgas semanais</div></div></div>
+        <div class="stat" style="padding:14px;border-left-color:#1565c0"><div class="icon" style="width:42px;height:42px;font-size:20px;background:rgba(21,101,192,.12)">☀️</div><div><div class="num" style="font-size:22px">${totalFolgaDom}</div><div class="lbl">Folgas de domingo</div></div></div>
+      </div>
+      ${buildSchedTable(e,false)}
+    </div>`;
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+
+/* ============================================================
+   EXPORTAÇÃO PDF (jsPDF)
+   ============================================================ */
+const PDF_COLORS={
+  work:[200,230,201], lunch:[255,243,205], dinner:[225,213,240],
+  off:[255,205,210], offsun:[187,222,251],
+  header:[139,0,0], headerSun:[94,0,0], gold:[212,175,55],
+  hours:[255,248,225], total:[212,175,55], white:[255,255,255], text:[40,40,40], muted:[245,245,245]
+};
+function pdfCellColor(cell){
+  if(cell.status===ST_FOLGA) return PDF_COLORS.off;
+  if(cell.status===ST_FOLGA_DOM) return PDF_COLORS.offsun;
+  const t=(cell.turno||'').toLowerCase();
+  if(t.includes('almo')) return PDF_COLORS.lunch;
+  if(t.includes('jant')||t.includes('noite')) return PDF_COLORS.dinner;
+  return PDF_COLORS.work;
+}
+function exportarPDF(id){
+  const e=DB.escalas().find(x=>x.id===id);if(!e){toast('Escala não encontrada.','error');return}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight();
+  const ML=10, MR=10;
+  const N=diasNoMes(e.ano,e.mes), nS=numSemanas(e.ano,e.mes);
+  // Cabeçalho documento
+  doc.setFillColor(...PDF_COLORS.header);doc.rect(0,0,PW,18,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);
+  doc.text('Gestão de Escala Don Garcia',ML,8);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text(`${e.setorNome||setorNome(e.setorId)}  •  ${MESES[e.mes]} de ${e.ano}`,ML,14);
+  doc.setFontSize(8);
+  doc.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')}`,PW-MR,8,{align:'right'});
+
+  // Larguras de coluna
+  const nameW=34;
+  const extraCols=nS+1; // semanas + total
+  const usable=PW-ML-MR-nameW;
+  const dayW=usable/(N+extraCols);
+  let x0=ML, y0=24;
+  const headH=8, rowH=9;
+
+  function drawHeader(y){
+    let x=x0;
+    // nome
+    doc.setFillColor(...PDF_COLORS.header);doc.rect(x,y,nameW,headH,'F');
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7);
+    doc.text('Colaborador',x+1.5,y+headH/2+1.5);
+    x+=nameW;
+    for(let d=1;d<=N;d++){
+      const js=new Date(e.ano,e.mes,d).getDay();
+      doc.setFillColor(...(js===0?PDF_COLORS.headerSun:PDF_COLORS.header));
+      doc.rect(x,y,dayW,headH,'F');
+      doc.setFontSize(6.5);doc.text(String(d),x+dayW/2,y+3.2,{align:'center'});
+      doc.setFontSize(5.2);doc.text(DOW_ABBR[js],x+dayW/2,y+6.4,{align:'center'});
+      x+=dayW;
+    }
+    doc.setFontSize(6);
+    for(let w=0;w<nS;w++){doc.setFillColor(...PDF_COLORS.header);doc.rect(x,y,dayW,headH,'F');doc.text('S'+(w+1),x+dayW/2,y+headH/2+1.5,{align:'center'});x+=dayW}
+    doc.setFillColor(...PDF_COLORS.gold);doc.rect(x,y,dayW,headH,'F');doc.setTextColor(94,0,0);doc.text('Tot',x+dayW/2,y+headH/2+1.5,{align:'center'});
+  }
+
+  let y=y0;
+  drawHeader(y);y+=headH;
+  const countDia=new Array(N+1).fill(0);
+
+  e.ordem.forEach(fid=>{
+    const reg=e.dados[fid];if(!reg)return;
+    // quebra de página
+    if(y+rowH>PH-30){doc.addPage();y=14;drawHeader(y);y+=headH}
+    let x=x0;
+    // nome
+    doc.setFillColor(247,247,249);doc.rect(x,y,nameW,rowH,'F');
+    doc.setDrawColor(220,220,220);doc.rect(x,y,nameW,rowH);
+    doc.setTextColor(...PDF_COLORS.text);doc.setFont('helvetica','bold');doc.setFontSize(6.3);
+    let nm=reg.nome;if(nm.length>22)nm=nm.slice(0,21)+'…';
+    doc.text(nm,x+1.5,y+rowH/2+1.5);
+    x+=nameW;
+    doc.setFont('helvetica','normal');
+    for(let d=1;d<=N;d++){
+      const cell=reg.dias[d];
+      if(cell.status===ST_TRABALHO)countDia[d]++;
+      doc.setFillColor(...pdfCellColor(cell));doc.rect(x,y,dayW,rowH,'F');
+      doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);
+      doc.setTextColor(...PDF_COLORS.text);
+      if(cell.status===ST_TRABALHO){
+        doc.setFontSize(5.4);doc.setFont('helvetica','bold');
+        doc.text(cell.jornada==='continua'?'10h':'7h20',x+dayW/2,y+3.6,{align:'center'});
+        doc.setFont('helvetica','normal');doc.setFontSize(4.6);
+        let tn=(cell.turno||'').slice(0,6);
+        doc.text(tn,x+dayW/2,y+6.8,{align:'center'});
+      }else{
+        doc.setFontSize(5);doc.setFont('helvetica','bold');
+        doc.text(cell.status===ST_FOLGA_DOM?'F.Dom':'Folga',x+dayW/2,y+rowH/2+1.5,{align:'center'});
+        doc.setFont('helvetica','normal');
+      }
+      x+=dayW;
+    }
+    // horas semanais
+    const sem=horasSemanais(reg,e.ano,e.mes);
+    doc.setFontSize(5.4);doc.setFont('helvetica','bold');
+    sem.forEach(h=>{doc.setFillColor(...PDF_COLORS.hours);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.setTextColor(...PDF_COLORS.text);doc.text(fmtH(h),x+dayW/2,y+rowH/2+1.5,{align:'center'});x+=dayW});
+    const total=sem.reduce((a,b)=>a+b,0);
+    doc.setFillColor(...PDF_COLORS.total);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.setTextColor(94,0,0);doc.text(fmtH(total),x+dayW/2,y+rowH/2+1.5,{align:'center'});
+    doc.setFont('helvetica','normal');
+    y+=rowH;
+  });
+
+  // linha contagem trabalhando
+  if(y+rowH>PH-30){doc.addPage();y=14}
+  let x=x0;
+  doc.setFillColor(236,238,242);doc.rect(x,y,nameW,rowH,'F');doc.setDrawColor(220,220,220);doc.rect(x,y,nameW,rowH);
+  doc.setTextColor(...PDF_COLORS.text);doc.setFont('helvetica','bold');doc.setFontSize(5.8);
+  doc.text('Trabalhando / dia',x+1.5,y+rowH/2+1.5);x+=nameW;
+  doc.setFontSize(6);
+  for(let d=1;d<=N;d++){doc.setFillColor(236,238,242);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.text(String(countDia[d]),x+dayW/2,y+rowH/2+1.5,{align:'center'});x+=dayW}
+  for(let w=0;w<nS+1;w++){doc.setFillColor(236,238,242);doc.rect(x,y,dayW,rowH,'F');doc.rect(x,y,dayW,rowH);x+=dayW}
+  y+=rowH+6;
+
+  // Legenda
+  if(y+20>PH){doc.addPage();y=14}
+  doc.setTextColor(...PDF_COLORS.text);doc.setFont('helvetica','bold');doc.setFontSize(8);
+  doc.text('Legenda:',ML,y);y+=4;
+  const leg=[
+    ['Almoço (trabalho)',PDF_COLORS.lunch],['Janta (trabalho)',PDF_COLORS.dinner],
+    ['Outro turno (trabalho)',PDF_COLORS.work],['Folga semanal',PDF_COLORS.off],['Folga domingo',PDF_COLORS.offsun]
+  ];
+  let lx=ML;
+  doc.setFont('helvetica','normal');doc.setFontSize(7);
+  leg.forEach(([txt,col])=>{
+    doc.setFillColor(...col);doc.rect(lx,y-3,5,4,'F');doc.setDrawColor(180,180,180);doc.rect(lx,y-3,5,4);
+    doc.text(txt,lx+6.5,y);lx+=6.5+doc.getTextWidth(txt)+8;
+  });
+  y+=6;
+  doc.setFontSize(6.8);doc.setTextColor(90,90,90);
+  doc.text('7h20 = jornada padrão (7h20 trabalho + 30min intervalo)   |   10h = jornada contínua (10h trabalho + 2h intervalo)   |   Regime 6x1',ML,y);
+
+  // rodapé
+  const pages=doc.internal.getNumberOfPages();
+  for(let p=1;p<=pages;p++){doc.setPage(p);doc.setFontSize(6.5);doc.setTextColor(150,150,150);doc.text(`Gestão de Escala Don Garcia — página ${p}/${pages}`,PW/2,PH-5,{align:'center'})}
+
+  const nomeArq=`Escala_${(e.setorNome||'setor').replace(/\s+/g,'_')}_${MESES[e.mes]}_${e.ano}.pdf`;
+  doc.save(nomeArq);
+  toast('PDF gerado com sucesso!','success');
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+document.addEventListener('DOMContentLoaded',()=>navigate('dashboard'));
+if(document.readyState!=='loading') navigate('dashboard');
+
+
+</script>
+</body>
+</html>
