@@ -1,0 +1,89 @@
+═══════════════════════════════════════════════════════════════
+  🍽️ SISTEMA DE GESTÃO DE ESCALA DON GARCIA - NUVEM AUTOMÁTICA
+═══════════════════════════════════════════════════════════════
+
+🌐 LINK DO SISTEMA (compartilhe com sua equipe):
+
+    https://7ba3545f1-8099.na119.preview.abacusai.app/
+
+═══════════════════════════════════════════════════════════════
+
+✅ COMO FUNCIONA:
+
+1. Abra o link acima em qualquer navegador (computador ou celular)
+2. Cadastre setores, funcionários e escalas normalmente
+3. TUDO É SALVO AUTOMATICAMENTE na nuvem (sem clicar em nada)
+4. Compartilhe o link com até 3 pessoas
+5. Mudanças aparecem para todos automaticamente em 5 segundos
+
+═══════════════════════════════════════════════════════════════
+
+🎯 FUNCIONALIDADES:
+
+☁️ SINCRONIZAÇÃO AUTOMÁTICA
+   - Cadastrou em um computador → aparece em todos os outros
+   - Não precisa copiar link, clicar em "salvar" ou fazer nada
+   - Indicador no menu mostra: "☁️ Sincronizado na nuvem"
+
+🏢 SETORES
+   - Cadastre setores (Cozinha, Salão, etc.)
+   - Defina horários padrão de entrada/saída por turno
+   - Jornada padrão (7h20) e contínua (10h)
+
+👥 FUNCIONÁRIOS
+   - Cadastre funcionários vinculados a setores
+   - Defina turno padrão e horários personalizados (opcional)
+
+📅 GERAÇÃO DE ESCALAS (3 passos)
+   1. Escolha setor, mês e ano
+   2. Configure cada funcionário (turno, folga, domingo de folga)
+   3. Edite a escala dia por dia (tabela completa com horas)
+
+📄 EXPORTAÇÃO PDF
+   - Layout profissional com todos os dados
+   - Horários de entrada/saída por dia
+   - Cálculo automático de horas semanais
+
+═══════════════════════════════════════════════════════════════
+
+📱 TESTE AGORA:
+
+1. Abra o link em 2 navegadores diferentes (ou celular + computador)
+2. No primeiro, clique em "Gerenciar Setores" e crie um setor
+3. No segundo, aguarde 5 segundos e veja o setor aparecer sozinho!
+
+═══════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANTE:
+
+Este link é TEMPORÁRIO - funciona enquanto o servidor do Abacus AI
+Agent estiver ativo (alguns dias ou semanas).
+
+Para uso PERMANENTE, siga o guia DEPLOY.md para hospedar no 
+Render.com (grátis, 5 minutos de setup, link nunca expira).
+
+═══════════════════════════════════════════════════════════════
+
+💾 BACKUP DOS DADOS:
+
+1. Clique no botão "🔗 Compartilhar" no Dashboard
+2. Copie o link gerado e salve em um arquivo de texto
+3. Esse link contém TODOS os dados e serve como backup completo
+4. Para restaurar, basta abrir o link
+
+═══════════════════════════════════════════════════════════════
+
+📞 DÚVIDAS OU PROBLEMAS?
+
+- O indicador mostra "⚠️ Sem conexão"?
+  → Aguarde 30 segundos e recarregue a página
+  
+- Não aparece a sincronização automática?
+  → Verifique se todos estão usando o MESMO link acima
+  
+- Quer hospedar permanentemente?
+  → Consulte o arquivo DEPLOY.md (5 minutos)
+
+═══════════════════════════════════════════════════════════════
+
+© 2026 Don Garcia • Sistema com Nuvem Automática
