@@ -39,15 +39,22 @@ Sistema completo de gerenciamento de escalas de trabalho para restaurantes, func
    - Cálculo automático de horas semanais (Semana 1-5 + Total)
    - Contador de pessoas trabalhando por dia
 
-### 🔗 Compartilhamento de Dados (NOVO!)
+### ☁️ Sincronização Automática na Nuvem (NOVO!)
+- **Tudo é salvo automaticamente no servidor** — não precisa fazer nada
+- **Todos os dispositivos compartilham os mesmos dados**: cadastre em um computador e aparece em todos os outros
+- **Atualização automática a cada 5 segundos**: mudanças feitas por outra pessoa aparecem na sua tela sozinhas
+- **Indicador de status** no rodapé: "☁️ Sincronizado na nuvem" / "⚠️ Sem conexão"
+- **Funciona para até 3 pessoas** ao mesmo tempo
+- Como funciona:
+  - O sistema roda em um servidor (`server.py`) que guarda os dados em `dados_nuvem.json`
+  - Ao abrir o link, o sistema carrega os dados do servidor
+  - A cada alteração, salva automaticamente no servidor
+  - A cada 5 segundos, verifica se outra pessoa mudou algo e atualiza a tela
+
+### 🔗 Compartilhamento de Dados (backup/transferência)
 - **Gera link com todos os dados** (setores + funcionários + escalas) codificados na URL
 - **QR Code** para escaneamento rápido
-- **Acesso de qualquer máquina**: basta abrir o link em outro computador para importar todos os dados automaticamente
-- Útil para:
-  - Transferir dados entre computadores
-  - Compartilhar com colegas de trabalho
-  - Backup rápido via link
-  - Sincronização manual (clique em "Compartilhar" > copie o link > abra em outra máquina)
+- Útil para backup ou transferir dados para um sistema rodando em modo local (offline)
 
 ### 📄 Exportação PDF
 - Layout profissional em paisagem (A4)

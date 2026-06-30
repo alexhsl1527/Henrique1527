@@ -208,7 +208,10 @@ table.sched td.total{background:var(--accent);font-weight:800;color:var(--primar
       <button data-page="gerar"><span class="ic">🗓️</span> Gerar Escala</button>
       <button data-page="visualizar"><span class="ic">📋</span> Visualizar Escalas</button>
     </nav>
-    <div class="foot">© Don Garcia • 100% Offline</div>
+    <div class="foot">
+      <div id="cloudStatus" style="font-size:12px;margin-bottom:4px">☁️ Conectando...</div>
+      © Don Garcia
+    </div>
   </aside>
 
   <div class="main">
@@ -283,17 +286,127 @@ function calcHorarioCell(escala, fid, turno, jornada){
 }
 
 /* ---------- Storage ---------- */
+/* ============================================================
+   CAMADA DE DADOS COM SINCRONIZAÇÃO AUTOMÁTICA NA NUVEM
+   - Mantém um cache em memória (síncrono para o resto do app)
+   - Carrega do servidor ao abrir
+   - Salva no servidor a cada alteração (e também no localStorage como backup)
+   - Faz polling para refletir mudanças feitas em outros dispositivos
+   ============================================================ */
+const API_BASE = (location.origin && location.origin.startsWith('http'))
+  ? location.origin + '/api'
+  : null; // null = modo offline (arquivo local), usa só localStorage
+
 const DB = {
   KEYS:{set:'dg_setores',func:'dg_funcionarios',esc:'dg_escalas'},
-  get(k){try{return JSON.parse(localStorage.getItem(k))||[]}catch(e){return[]}},
-  set(k,v){localStorage.setItem(k,JSON.stringify(v))},
-  setores(){return this.get(this.KEYS.set)},
-  funcionarios(){return this.get(this.KEYS.func)},
-  escalas(){return this.get(this.KEYS.esc)},
-  saveSetores(v){this.set(this.KEYS.set,v)},
-  saveFuncionarios(v){this.set(this.KEYS.func,v)},
-  saveEscalas(v){this.set(this.KEYS.esc,v)}
+  _cache:{setores:null,funcionarios:null,escalas:null},
+  _versao:0,
+  _online:false,
+
+  // --- leitura local (cache -> localStorage) ---
+  _ls(k){try{return JSON.parse(localStorage.getItem(k))||[]}catch(e){return[]}},
+  setores(){return this._cache.setores!==null?this._cache.setores:this._ls(this.KEYS.set)},
+  funcionarios(){return this._cache.funcionarios!==null?this._cache.funcionarios:this._ls(this.KEYS.func)},
+  escalas(){return this._cache.escalas!==null?this._cache.escalas:this._ls(this.KEYS.esc)},
+
+  // --- escrita: atualiza cache + localStorage + servidor ---
+  saveSetores(v){this._cache.setores=v;localStorage.setItem(this.KEYS.set,JSON.stringify(v));this._push()},
+  saveFuncionarios(v){this._cache.funcionarios=v;localStorage.setItem(this.KEYS.func,JSON.stringify(v));this._push()},
+  saveEscalas(v){this._cache.escalas=v;localStorage.setItem(this.KEYS.esc,JSON.stringify(v));this._push()},
+
+  // --- aplica dados vindos do servidor ao cache/localStorage ---
+  _aplicar(dados){
+    this._cache.setores=dados.setores||[];
+    this._cache.funcionarios=dados.funcionarios||[];
+    this._cache.escalas=dados.escalas||[];
+    this._versao=dados.versao||0;
+    localStorage.setItem(this.KEYS.set,JSON.stringify(this._cache.setores));
+    localStorage.setItem(this.KEYS.func,JSON.stringify(this._cache.funcionarios));
+    localStorage.setItem(this.KEYS.esc,JSON.stringify(this._cache.escalas));
+  },
+
+  // --- carrega do servidor (ou localStorage se offline) ---
+  async carregar(){
+    if(!API_BASE){
+      // modo arquivo local
+      this._cache.setores=this._ls(this.KEYS.set);
+      this._cache.funcionarios=this._ls(this.KEYS.func);
+      this._cache.escalas=this._ls(this.KEYS.esc);
+      return;
+    }
+    try{
+      const r=await fetch(API_BASE+'/data',{cache:'no-store'});
+      if(!r.ok)throw new Error('status '+r.status);
+      const dados=await r.json();
+      this._aplicar(dados);
+      this._online=true;
+      atualizarStatusNuvem(true);
+    }catch(e){
+      // sem servidor: cai para localStorage
+      this._cache.setores=this._ls(this.KEYS.set);
+      this._cache.funcionarios=this._ls(this.KEYS.func);
+      this._cache.escalas=this._ls(this.KEYS.esc);
+      this._online=false;
+      atualizarStatusNuvem(false);
+    }
+  },
+
+  // --- envia o estado atual ao servidor (com debounce) ---
+  _pushTimer:null,
+  _push(){
+    if(!API_BASE)return;
+    clearTimeout(this._pushTimer);
+    this._pushTimer=setTimeout(async()=>{
+      try{
+        const payload={
+          setores:this.setores(),
+          funcionarios:this.funcionarios(),
+          escalas:this.escalas()
+        };
+        const r=await fetch(API_BASE+'/data',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        const res=await r.json();
+        if(res.versao)this._versao=res.versao;
+        this._online=true;
+        atualizarStatusNuvem(true);
+      }catch(e){
+        this._online=false;
+        atualizarStatusNuvem(false);
+      }
+    },400);
+  },
+
+  // --- verifica se outro dispositivo alterou os dados ---
+  async checarAtualizacoes(){
+    if(!API_BASE)return;
+    try{
+      const r=await fetch(API_BASE+'/versao',{cache:'no-store'});
+      const {versao}=await r.json();
+      if(versao && versao!==this._versao){
+        // mudou em outro lugar: recarrega e atualiza a tela atual
+        await this.carregar();
+        if(typeof reRenderAtual==='function')reRenderAtual();
+      }
+      this._online=true;
+      atualizarStatusNuvem(true);
+    }catch(e){
+      this._online=false;
+      atualizarStatusNuvem(false);
+    }
+  }
 };
+
+// indicador visual de status da nuvem
+function atualizarStatusNuvem(online){
+  const el=document.getElementById('cloudStatus');
+  if(!el)return;
+  if(!API_BASE){el.textContent='💾 Modo Local';el.style.color='#888';return;}
+  el.textContent=online?'☁️ Sincronizado na nuvem':'⚠️ Sem conexão (dados locais)';
+  el.style.color=online?'#2e7d32':'#c62828';
+}
 const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 
 /* ---------- Toast ---------- */
@@ -355,6 +468,19 @@ document.getElementById('nav').addEventListener('click',e=>{
   const b=e.target.closest('button[data-page]');if(b)navigate(b.dataset.page);
 });
 document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+
+/* Re-renderiza a tela atual quando chegam dados novos da nuvem.
+   Evita interromper trabalho em andamento: não atualiza se um modal
+   estiver aberto ou se estiver no assistente de gerar escala. */
+function reRenderAtual(){
+  const modalAberto=document.getElementById('modalOverlay')?.classList.contains('open');
+  if(modalAberto)return; // não interrompe edição em modal
+  if(currentPage==='gerar')return; // não interrompe o assistente de geração
+  // só atualiza listagens seguras
+  if(['dashboard','setores','funcionarios','visualizar'].includes(currentPage)){
+    PAGES[currentPage].render();
+  }
+}
 
 
 /* ============================================================
@@ -1315,22 +1441,35 @@ function exportarDadosURL(){
   },100);
 }
 
-function importarDadosURL(){
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+async function iniciarApp(){
+  // 1) Carrega dados do servidor (ou localStorage se offline)
+  await DB.carregar();
+  // 2) Se veio link de compartilhamento com ?dados=, importa e salva na nuvem
+  if(importarDadosViaURL())return; // importarDadosViaURL faz reload
+  // 3) Mostra o dashboard
+  navigate('dashboard');
+  // 4) Inicia sincronização automática a cada 5 segundos
+  setInterval(()=>DB.checarAtualizacoes(),5000);
+}
+
+// Importa dados de um link de compartilhamento (?dados=...) e salva na nuvem.
+// Retorna true se houve importação (que dispara reload).
+function importarDadosViaURL(){
   const params=new URLSearchParams(window.location.search);
   const dadosB64=params.get('dados');
   if(!dadosB64)return false;
-  
   try{
     const json=decodeURIComponent(escape(atob(dadosB64)));
     const dados=JSON.parse(json);
     if(dados.setores)DB.saveSetores(dados.setores);
     if(dados.funcionarios)DB.saveFuncionarios(dados.funcionarios);
     if(dados.escalas)DB.saveEscalas(dados.escalas);
-    
-    toast('✅ Dados importados com sucesso! Redirecionando...','success');
+    toast('✅ Dados importados com sucesso!','success');
     setTimeout(()=>{
       window.history.replaceState({},'',window.location.pathname);
-      navigate('dashboard');
       location.reload();
     },1500);
     return true;
@@ -1340,14 +1479,10 @@ function importarDadosURL(){
   }
 }
 
-/* ============================================================
-   INICIALIZAÇÃO
-   ============================================================ */
-document.addEventListener('DOMContentLoaded',()=>{
-  if(!importarDadosURL())navigate('dashboard');
-});
-if(document.readyState!=='loading'){
-  if(!importarDadosURL())navigate('dashboard');
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',iniciarApp);
+}else{
+  iniciarApp();
 }
 
 
