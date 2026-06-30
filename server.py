@@ -12,7 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, "dados_nuvem.json")
 INDEX_FILE = os.path.join(BASE_DIR, "index.html")
-PORT = 8099
+PORT = int(os.environ.get("PORT", 8099))  # Render fornece PORT via env
 
 # Lock para evitar conflito de escrita simultânea (até 3 pessoas)
 _lock = threading.Lock()
