@@ -1,10 +1,10 @@
 ═══════════════════════════════════════════════════════════════
-  🍽️ SISTEMA DE GESTÃO DE ESCALA DON GARCIA - NUVEM AUTOMÁTICA
+  🍽️ SISTEMA DE GESTÃO DE ESCALA DON GARCIA - PERMANENTE
 ═══════════════════════════════════════════════════════════════
 
-🌐 LINK DO SISTEMA (compartilhe com sua equipe):
+🌐 LINK DO SISTEMA (permanente, online 24h, nunca expira):
 
-    https://7ba3545f1-8099.na119.preview.abacusai.app/
+    https://henrique1527.onrender.com/
 
 ═══════════════════════════════════════════════════════════════
 
@@ -54,13 +54,17 @@
 
 ═══════════════════════════════════════════════════════════════
 
-⚠️ IMPORTANTE:
+✅ SISTEMA PERMANENTE:
 
-Este link é TEMPORÁRIO - funciona enquanto o servidor do Abacus AI
-Agent estiver ativo (alguns dias ou semanas).
+- ✅ Online 24 horas por dia, 7 dias por semana
+- ✅ Link nunca expira
+- ✅ Dados salvos na nuvem para sempre
+- ✅ Sincronização automática entre todos os dispositivos
+- ✅ 100% grátis (plano Free do Render.com)
 
-Para uso PERMANENTE, siga o guia DEPLOY.md para hospedar no 
-Render.com (grátis, 5 minutos de setup, link nunca expira).
+⚠️ Observação do plano grátis: Se ninguém acessar o site por 15
+minutos, ele "hiberna" para economizar recursos. No próximo acesso,
+leva ~30 segundos para "acordar". Os dados NÃO se perdem.
 
 ═══════════════════════════════════════════════════════════════
 
@@ -73,17 +77,32 @@ Render.com (grátis, 5 minutos de setup, link nunca expira).
 
 ═══════════════════════════════════════════════════════════════
 
-📞 DÚVIDAS OU PROBLEMAS?
+🔧 INFORMAÇÕES TÉCNICAS:
 
-- O indicador mostra "⚠️ Sem conexão"?
-  → Aguarde 30 segundos e recarregue a página
-  
-- Não aparece a sincronização automática?
-  → Verifique se todos estão usando o MESMO link acima
-  
-- Quer hospedar permanentemente?
-  → Consulte o arquivo DEPLOY.md (5 minutos)
+- Hospedagem: Render.com (plano Free)
+- Repositório: github.com/alexhsl1527/Henrique1527
+- Conta GitHub: alexhsl1527
+- Conta Render: conectada via GitHub
+- Servidor: Python 3 com persistência em arquivo JSON
+- Frontend: HTML5 + JavaScript (100% no navegador)
 
 ═══════════════════════════════════════════════════════════════
 
-© 2026 Don Garcia • Sistema com Nuvem Automática
+📞 DÚVIDAS OU PROBLEMAS?
+
+- O indicador mostra "⚠️ Sem conexão"?
+  → Aguarde 30 segundos (servidor estava hibernando) e recarregue
+
+- Não aparece a sincronização automática?
+  → Verifique se todos estão usando o MESMO link acima
+
+- Precisa adicionar mais de 3 pessoas?
+  → O sistema suporta, mas o plano Free pode ficar lento. 
+     Considere upgrade para plano pago no Render ($7/mês)
+
+- Quer trocar o nome do link?
+  → Acesse dashboard.render.com → Settings → Altere o nome
+
+═══════════════════════════════════════════════════════════════
+
+© 2026 Don Garcia • Sistema Permanente na Nuvem
