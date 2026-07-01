@@ -338,9 +338,19 @@ const DB = {
       const r=await fetch(API_BASE+'/data',{cache:'no-store'});
       if(!r.ok)throw new Error('status '+r.status);
       const dados=await r.json();
+      // --- MERGE DE SEGURANÇA: nunca apaga dados locais que o servidor não tem ---
+      // Se o servidor está vazio numa categoria mas o navegador tem dados, mantém os locais
+      // (e envia ao servidor). Evita perder escalas/setores/funcionários salvos só localmente.
+      const locSet=this._ls(this.KEYS.set), locFunc=this._ls(this.KEYS.func), locEsc=this._ls(this.KEYS.esc);
+      let recuperou=false;
+      if((!dados.setores||!dados.setores.length)&&locSet.length){dados.setores=locSet;recuperou=true;}
+      if((!dados.funcionarios||!dados.funcionarios.length)&&locFunc.length){dados.funcionarios=locFunc;recuperou=true;}
+      if((!dados.escalas||!dados.escalas.length)&&locEsc.length){dados.escalas=locEsc;recuperou=true;}
       this._aplicar(dados);
       this._online=true;
       atualizarStatusNuvem(true);
+      // se recuperou dados locais que faltavam no servidor, sobe pro servidor
+      if(recuperou)this._push();
     }catch(e){
       // sem servidor: cai para localStorage
       this._cache.setores=this._ls(this.KEYS.set);
