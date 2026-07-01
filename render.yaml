@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: escala-don-garcia
+    env: python
+    buildCommand: ""
+    startCommand: "python3 server.py"
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.6
