@@ -1,0 +1,63 @@
+═══════════════════════════════════════════════════════════════
+  ✅ ÚLTIMO PASSO — FAÇA NO SEU CELULAR OU COMPUTADOR (2 minutos)
+═══════════════════════════════════════════════════════════════
+
+Tudo já está pronto! Só falta finalizar o deploy no SEU aparelho,
+onde o navegador é estável e seguro para digitar o cartão.
+
+───────────────────────────────────────────────────────────────
+O QUE JÁ ESTÁ FEITO:
+───────────────────────────────────────────────────────────────
+✅ Conta no GitHub criada (alexhsl1527)
+✅ Repositório criado com todos os arquivos (Henrique1527)
+✅ Conta no Render criada e conectada ao GitHub
+
+───────────────────────────────────────────────────────────────
+O QUE VOCÊ VAI FAZER (no seu celular/computador):
+───────────────────────────────────────────────────────────────
+
+1) Acesse:  https://dashboard.render.com
+
+2) Clique em "GitHub" para entrar (mesma conta que você criou)
+
+3) Clique em "New +"  →  "Web Service"
+
+4) Escolha o repositório:  alexhsl1527/Henrique1527
+
+5) Confira as configurações (já vêm preenchidas):
+   - Language:        Python 3
+   - Branch:          main
+   - Build Command:   pip install -r requirements.txt
+   - Start Command:   python3 server.py
+   - Instance Type:   Free ($0/mês)  ← IMPORTANTE escolher Free
+
+6) Clique em "Deploy Web Service"
+
+7) Vai pedir um cartão para VERIFICAÇÃO:
+   - Preencha nome, país (Brazil), endereço e o cartão
+   - É só uma autorização de US$ 1 que é DEVOLVIDA (não é cobrança)
+   - O plano continua GRÁTIS ($0/mês) — o cartão nunca é cobrado
+   - Clique em "Add Card"
+
+8) O deploy começa automaticamente. Aguarde 2-3 minutos.
+
+9) Quando terminar, aparece no topo:
+   "Your service is live at https://escala-don-garcia.onrender.com"
+   
+   ESSE é o seu link permanente! Funciona para sempre. 🎉
+
+───────────────────────────────────────────────────────────────
+DEPOIS QUE FICAR ONLINE:
+───────────────────────────────────────────────────────────────
+- Compartilhe o link https://escala-don-garcia.onrender.com com
+  as 3 pessoas da equipe
+- Todos veem os mesmos dados, sincronizado automaticamente
+- Nunca mais fica offline (fica no ar 24h)
+
+Obs: no plano grátis, se ninguém acessar por 15 min, o site
+"hiberna" e demora ~30 segundos para acordar no próximo acesso.
+Os dados NÃO se perdem.
+
+───────────────────────────────────────────────────────────────
+DÚVIDAS? Me chame aqui na conversa que eu te ajudo!
+═══════════════════════════════════════════════════════════════
