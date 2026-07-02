@@ -1,33 +1,192 @@
 {
   "setores": [
     {
-      "nome": "Cozinha"
+      "id": "mr0z5hu9b4rcl",
+      "nome": "Cozinha",
+      "horarios": [
+        {
+          "turno": "Almoço",
+          "entP": "09:00",
+          "saiP": "16:50",
+          "ent10": "09:00",
+          "sai10": "21:00"
+        },
+        {
+          "turno": "Janta",
+          "entP": "17:00",
+          "saiP": "00:50",
+          "ent10": "15:00",
+          "sai10": "03:00"
+        }
+      ]
     },
     {
-      "nome": "Garçom"
+      "id": "mr0z69ba4im2d",
+      "nome": "Garçom",
+      "horarios": [
+        {
+          "turno": "Almoço",
+          "entP": "10:00",
+          "saiP": "17:00",
+          "ent10": "12:00",
+          "sai10": "00:00"
+        },
+        {
+          "turno": "Janta",
+          "entP": "17:00",
+          "saiP": "00:00",
+          "ent10": "15:00",
+          "sai10": "03:00"
+        }
+      ]
     },
     {
-      "nome": "Caixa"
+      "id": "mr0z6fr335s2n",
+      "nome": "Caixa",
+      "horarios": [
+        {
+          "turno": "Almoço",
+          "entP": "09:00",
+          "saiP": "16:50",
+          "ent10": "09:00",
+          "sai10": "21:00"
+        },
+        {
+          "turno": "Janta",
+          "entP": "17:00",
+          "saiP": "00:50",
+          "ent10": "15:00",
+          "sai10": "03:00"
+        }
+      ]
     },
     {
-      "nome": "bar"
+      "id": "mr0z6mqwfbikn",
+      "nome": "bar",
+      "horarios": [
+        {
+          "turno": "Almoço",
+          "entP": "11:00",
+          "saiP": "17:00",
+          "ent10": "11:00",
+          "sai10": "23:00"
+        },
+        {
+          "turno": "Janta",
+          "entP": "17:00",
+          "saiP": "00:00",
+          "ent10": "15:00",
+          "sai10": "03:00"
+        }
+      ]
     },
     {
-      "nome": "Brinquedoteca"
+      "id": "mr0z7l24epxru",
+      "nome": "Brinquedoteca",
+      "horarios": [
+        {
+          "turno": "Almoço",
+          "entP": "09:00",
+          "saiP": "16:50",
+          "ent10": "09:00",
+          "sai10": "21:00"
+        },
+        {
+          "turno": "Janta",
+          "entP": "17:00",
+          "saiP": "00:50",
+          "ent10": "15:00",
+          "sai10": "03:00"
+        }
+      ]
     }
   ],
   "funcionarios": [
     {
-      "nome": "teste"
-    }
-  ],
-  "escalas": [
+      "id": "mr0z89m89ho36",
+      "nome": "Enzor",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Janta",
+      "horario": null
+    },
     {
-      "id": "prodtest",
-      "setorNome": "bar",
-      "mes": 6,
-      "ano": 2026
+      "id": "mr0z8spwsygzm",
+      "nome": "Junior",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr0z9cwyhkrnb",
+      "nome": "Romes",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr0za5x0zilbw",
+      "nome": "Tiago",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Almoço",
+      "horario": null
+    },
+    {
+      "id": "mr0zaktgrwdxo",
+      "nome": "Wilian",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr0zb32ay7lzi",
+      "nome": "João Paulo",
+      "setorId": "mr0z5hu9b4rcl",
+      "turno": "Almoço",
+      "horario": null
+    },
+    {
+      "id": "mr0zbhovvuhgw",
+      "nome": "João Paulo",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr0zbyhobwua0",
+      "nome": "João Gilson",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr14rg9kgpv8n",
+      "nome": "Treissy",
+      "setorId": "mr0z6mqwfbikn",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr14rta2xe4p3",
+      "nome": "Thiago",
+      "setorId": "mr0z6mqwfbikn",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr14sez5s5lpo",
+      "nome": "Ryan",
+      "setorId": "mr0z6mqwfbikn",
+      "turno": "Janta",
+      "horario": null
+    },
+    {
+      "id": "mr14ss7ee3iey",
+      "nome": "João",
+      "setorId": "mr0z6mqwfbikn",
+      "turno": "Janta",
+      "horario": null
     }
   ],
-  "versao": 2
+  "escalas": [],
+  "versao": 3
 }
