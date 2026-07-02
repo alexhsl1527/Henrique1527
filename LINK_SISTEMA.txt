@@ -58,13 +58,19 @@
 
 - ✅ Online 24 horas por dia, 7 dias por semana
 - ✅ Link nunca expira
-- ✅ Dados salvos na nuvem para sempre
+- ✅ Dados salvos PARA SEMPRE (armazenados no GitHub)
 - ✅ Sincronização automática entre todos os dispositivos
-- ✅ 100% grátis (plano Free do Render.com)
+- ✅ 100% grátis (Render.com + GitHub)
+
+🔒 ARMAZENAMENTO À PROVA DE FALHAS:
+Os dados NÃO ficam mais no disco do Render (que apagava tudo quando
+o servidor hibernava). Agora ficam guardados no GitHub, num arquivo
+permanente (dados_nuvem.json, na branch "dados"). Mesmo que o servidor
+reinicie mil vezes, os dados voltam sempre. NÃO SOME MAIS.
 
 ⚠️ Observação do plano grátis: Se ninguém acessar o site por 15
-minutos, ele "hiberna" para economizar recursos. No próximo acesso,
-leva ~30 segundos para "acordar". Os dados NÃO se perdem.
+minutos, ele "hiberna". No próximo acesso, leva ~30-50 segundos para
+"acordar". Os dados NÃO se perdem (ficam salvos no GitHub).
 
 ═══════════════════════════════════════════════════════════════
 
