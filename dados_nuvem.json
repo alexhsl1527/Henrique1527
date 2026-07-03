@@ -185,6 +185,13 @@
       "setorId": "mr0z6mqwfbikn",
       "turno": "Janta",
       "horario": null
+    },
+    {
+      "id": "mr4ys7h3b0y39",
+      "nome": "ÉRICA",
+      "setorId": "mr0z6fr335s2n",
+      "turno": "Janta",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2013,5 +2020,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 4
+  "versao": 5
 }
