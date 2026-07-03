@@ -199,6 +199,13 @@
       "setorId": "mr0z6fr335s2n",
       "turno": "Amoço",
       "horario": null
+    },
+    {
+      "id": "mr4ytko0ia3nc",
+      "nome": "SARA",
+      "setorId": "mr0z6fr335s2n",
+      "turno": "Janta",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2027,5 +2034,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 6
+  "versao": 7
 }
