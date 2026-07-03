@@ -192,6 +192,13 @@
       "setorId": "mr0z6fr335s2n",
       "turno": "Janta",
       "horario": null
+    },
+    {
+      "id": "mr4yt1ik82mix",
+      "nome": "ANA CALINNE",
+      "setorId": "mr0z6fr335s2n",
+      "turno": "Amoço",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2020,5 +2027,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 5
+  "versao": 6
 }
