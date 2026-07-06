@@ -227,6 +227,13 @@
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Janta",
       "horario": null
+    },
+    {
+      "id": "mr9dwt14x2jz3",
+      "nome": "SANDRA",
+      "setorId": "mr0z5hu9b4rcl",
+      "turno": "Amoço",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2055,5 +2062,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 16
+  "versao": 17
 }
