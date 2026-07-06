@@ -262,6 +262,13 @@
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Janta",
       "horario": null
+    },
+    {
+      "id": "mr9dy75lkqhvq",
+      "nome": "LOURDES",
+      "setorId": "mr0z5hu9b4rcl",
+      "turno": "Janta",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2090,5 +2097,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 21
+  "versao": 22
 }
