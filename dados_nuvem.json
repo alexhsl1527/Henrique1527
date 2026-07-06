@@ -241,6 +241,13 @@
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Amoço",
       "horario": null
+    },
+    {
+      "id": "mr9dxa2z1hgu5",
+      "nome": "CRISTIANE",
+      "setorId": "mr0z5hu9b4rcl",
+      "turno": "Amoço",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2069,5 +2076,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 18
+  "versao": 19
 }
