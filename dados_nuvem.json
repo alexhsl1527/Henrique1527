@@ -269,6 +269,13 @@
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Janta",
       "horario": null
+    },
+    {
+      "id": "mr9dyiusi6szf",
+      "nome": "DOUGLAS",
+      "setorId": "mr0z5hu9b4rcl",
+      "turno": "Janta",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2097,5 +2104,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 22
+  "versao": 23
 }
