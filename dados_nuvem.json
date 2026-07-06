@@ -138,13 +138,6 @@
       "horario": null
     },
     {
-      "id": "mr0zb32ay7lzi",
-      "nome": "João Paulo",
-      "setorId": "mr0z5hu9b4rcl",
-      "turno": "Almoço",
-      "horario": null
-    },
-    {
       "id": "mr0zbhovvuhgw",
       "nome": "João Paulo",
       "setorId": "mr0z69ba4im2d",
@@ -2111,5 +2104,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 24
+  "versao": 25
 }
