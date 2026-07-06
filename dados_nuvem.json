@@ -248,6 +248,13 @@
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Amoço",
       "horario": null
+    },
+    {
+      "id": "mr9dxnkme1gv1",
+      "nome": "JULIANA",
+      "setorId": "mr0z5hu9b4rcl",
+      "turno": "Amoço",
+      "horario": null
     }
   ],
   "escalas": [
@@ -2076,5 +2083,5 @@
       "criadoEm": "2026-07-01T20:06:29.597Z"
     }
   ],
-  "versao": 19
+  "versao": 20
 }
