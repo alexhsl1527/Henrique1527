@@ -3550,10 +3550,10 @@
             },
             "12": {
               "status": "trabalho",
-              "turno": "Janta",
+              "turno": "Almoço",
               "jornada": "padrao",
-              "entrada": "16:00",
-              "saida": "23:30"
+              "entrada": "09:00",
+              "saida": "16:00"
             },
             "13": {
               "status": "folga",
@@ -4366,5 +4366,5 @@
       "criadoEm": "2026-07-06T20:52:31.815Z"
     }
   ],
-  "versao": 30
+  "versao": 31
 }
