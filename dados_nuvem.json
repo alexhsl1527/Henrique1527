@@ -145,13 +145,6 @@
       "horario": null
     },
     {
-      "id": "mr0zbyhobwua0",
-      "nome": "João Gilson",
-      "setorId": "mr0z69ba4im2d",
-      "turno": "Janta",
-      "horario": null
-    },
-    {
       "id": "mr14rg9kgpv8n",
       "nome": "Treissy",
       "setorId": "mr0z6mqwfbikn",
@@ -4366,5 +4359,5 @@
       "criadoEm": "2026-07-06T20:52:31.815Z"
     }
   ],
-  "versao": 31
+  "versao": 32
 }
