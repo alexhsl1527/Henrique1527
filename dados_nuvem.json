@@ -276,6 +276,13 @@
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Almoço",
       "horario": null
+    },
+    {
+      "id": "mrv1mgjx8efbz",
+      "nome": "JOÃO CARLOS",
+      "setorId": "mr0z6fr335s2n",
+      "turno": "Almoço",
+      "horario": null
     }
   ],
   "escalas": [
@@ -5728,5 +5735,5 @@
       "criadoEm": "2026-07-14T19:37:01.021Z"
     }
   ],
-  "versao": 36
+  "versao": 37
 }
