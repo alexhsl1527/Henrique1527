@@ -269,6 +269,13 @@
       "setorId": "mr0z6fr335s2n",
       "turno": "Almoço",
       "horario": null
+    },
+    {
+      "id": "mrv1neykacw8q",
+      "nome": "JOANA",
+      "setorId": "mr0z6fr335s2n",
+      "turno": "Janta",
+      "horario": null
     }
   ],
   "escalas": [
@@ -5721,5 +5728,5 @@
       "criadoEm": "2026-07-14T19:37:01.021Z"
     }
   ],
-  "versao": 39
+  "versao": 40
 }
