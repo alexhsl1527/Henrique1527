@@ -194,13 +194,6 @@
       "horario": null
     },
     {
-      "id": "mr4ytz63rdtqi",
-      "nome": "JOANA",
-      "setorId": "mr0z6fr335s2n",
-      "turno": "Amoço",
-      "horario": null
-    },
-    {
       "id": "mr9dwcg5y014h",
       "nome": "RONIVALDO",
       "setorId": "mr0z5hu9b4rcl",
@@ -5728,5 +5721,5 @@
       "criadoEm": "2026-07-14T19:37:01.021Z"
     }
   ],
-  "versao": 38
+  "versao": 39
 }
