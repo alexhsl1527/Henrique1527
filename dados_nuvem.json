@@ -159,13 +159,6 @@
       "horario": null
     },
     {
-      "id": "mr14sez5s5lpo",
-      "nome": "Ryan",
-      "setorId": "mr0z6mqwfbikn",
-      "turno": "Janta",
-      "horario": null
-    },
-    {
       "id": "mr4ys7h3b0y39",
       "nome": "ÉRICA",
       "setorId": "mr0z6fr335s2n",
@@ -6865,5 +6858,5 @@
       "criadoEm": "2026-07-21T19:29:19.043Z"
     }
   ],
-  "versao": 46
+  "versao": 47
 }
