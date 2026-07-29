@@ -276,6 +276,13 @@
       "setorId": "mr0z6fr335s2n",
       "turno": "Janta",
       "horario": null
+    },
+    {
+      "id": "ms6i7su7baphu",
+      "nome": "PAULO VITOR",
+      "setorId": "mr0z6mqwfbikn",
+      "turno": "Almoço",
+      "horario": null
     }
   ],
   "escalas": [
@@ -6865,5 +6872,5 @@
       "criadoEm": "2026-07-21T19:29:19.043Z"
     }
   ],
-  "versao": 42
+  "versao": 43
 }
