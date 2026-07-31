@@ -269,6 +269,13 @@
       "setorId": "mr0z6mqwfbikn",
       "turno": "Almoço",
       "horario": null
+    },
+    {
+      "id": "ms90guxutetqi",
+      "nome": "RYANGLEY",
+      "setorId": "mr0z69ba4im2d",
+      "turno": "Janta",
+      "horario": null
     }
   ],
   "escalas": [
@@ -7545,5 +7552,5 @@
       "criadoEm": "2026-07-30T18:05:37.093Z"
     }
   ],
-  "versao": 48
+  "versao": 49
 }
