@@ -215,13 +215,6 @@
       "horario": null
     },
     {
-      "id": "mr9dxnkme1gv1",
-      "nome": "JULIANA",
-      "setorId": "mr0z5hu9b4rcl",
-      "turno": "Amoço",
-      "horario": null
-    },
-    {
       "id": "mr9dxzpsocsup",
       "nome": "KEILA",
       "setorId": "mr0z5hu9b4rcl",
@@ -9139,5 +9132,5 @@
       "criadoEm": "2026-07-31T14:17:25.544Z"
     }
   ],
-  "versao": 53
+  "versao": 54
 }
