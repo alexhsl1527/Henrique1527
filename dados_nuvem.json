@@ -283,6 +283,13 @@
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Almoço",
       "horario": null
+    },
+    {
+      "id": "mshxdpby8miwu",
+      "nome": "Kawan Raul",
+      "setorId": "mr0z6mqwfbikn",
+      "turno": "almoço",
+      "horario": null
     }
   ],
   "escalas": [
@@ -11633,5 +11640,5 @@
       "criadoEm": "2026-07-31T21:37:02.879Z"
     }
   ],
-  "versao": 61
+  "versao": 62
 }
