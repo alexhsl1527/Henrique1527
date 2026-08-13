@@ -236,13 +236,6 @@
       "funcao": "Ajudante de Cozinha"
     },
     {
-      "id": "mr9dyiusi6szf",
-      "nome": "DOUGLAS",
-      "setorId": "mr0z5hu9b4rcl",
-      "turno": "Janta",
-      "horario": null
-    },
-    {
       "id": "mr9lra8ra8fb9",
       "nome": "SUELY",
       "setorId": "mr0z5hu9b4rcl",
@@ -11879,5 +11872,5 @@
       "criadoEm": "2026-07-31T21:37:02.879Z"
     }
   ],
-  "versao": 74
+  "versao": 75
 }
