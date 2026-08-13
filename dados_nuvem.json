@@ -283,8 +283,9 @@
       "id": "ms9gkkzyfmrru",
       "nome": "Mirian",
       "setorId": "mr0z5hu9b4rcl",
-      "turno": "Almoço",
-      "horario": null
+      "turno": "Janta",
+      "horario": null,
+      "funcao": "Cozinheiro"
     },
     {
       "id": "mshxdpby8miwu",
@@ -11874,5 +11875,5 @@
       "criadoEm": "2026-07-31T21:37:02.879Z"
     }
   ],
-  "versao": 77
+  "versao": 78
 }
