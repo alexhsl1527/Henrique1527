@@ -192,7 +192,8 @@
       "nome": "RYAN",
       "setorId": "mr0z5hu9b4rcl",
       "turno": "Janta",
-      "horario": null
+      "horario": null,
+      "funcao": "Churrasqueiro"
     },
     {
       "id": "mr9dwt14x2jz3",
@@ -11873,5 +11874,5 @@
       "criadoEm": "2026-07-31T21:37:02.879Z"
     }
   ],
-  "versao": 68
+  "versao": 69
 }
