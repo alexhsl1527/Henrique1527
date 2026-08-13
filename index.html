@@ -166,6 +166,7 @@ table.sched td.total{background:var(--accent);font-weight:800;color:var(--primar
 .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px}
 .legend .item{display:flex;align-items:center;gap:6px;font-size:12.5px}
 .legend .sw{width:18px;height:18px;border-radius:4px;border:1px solid rgba(0,0,0,.1)}
+.aviso-previsao{margin-top:14px;padding:12px 16px;background:rgba(255,193,7,.14);border:1px solid rgba(212,175,55,.55);border-left:5px solid var(--accent,#d4af37);border-radius:10px;font-size:13px;line-height:1.5;color:#5a4600}
 .daycount{font-size:11px;font-weight:700;background:#eceef2}
 
 .helpbox{background:#fff8e1;border-left:4px solid var(--accent);padding:14px 18px;border-radius:8px;font-size:13.5px;margin-bottom:16px}
@@ -890,14 +891,28 @@ function toggle10h(funcId,d,el){
 
 /* ---------- ALGORITMO DE GERAÇÃO ---------- */
 function weekIndex(ano,mes,d){
-  // semanas Seg->Dom; retorna 0-based
-  const firstJs=new Date(ano,mes,1).getDay();
-  const lead=dowIndex(firstJs);
-  return Math.floor((d-1+lead)/7);
+  // semanas Domingo->Sábado; retorna 0-based
+  const firstJs=new Date(ano,mes,1).getDay(); // 0=Dom .. 6=Sáb
+  return Math.floor((d-1+firstJs)/7);
 }
 function numSemanas(ano,mes){
   const N=diasNoMes(ano,mes);
   return weekIndex(ano,mes,N)+1;
+}
+// intervalo de dias (Dom->Sáb) de cada semana w (0-based) dentro do mês
+function semanaRange(ano,mes,w){
+  const N=diasNoMes(ano,mes);
+  let ini=null,fim=null;
+  for(let d=1;d<=N;d++){
+    if(weekIndex(ano,mes,d)===w){ if(ini===null)ini=d; fim=d; }
+  }
+  return {ini,fim};
+}
+function semanaLabelRange(ano,mes,w){
+  const {ini,fim}=semanaRange(ano,mes,w);
+  if(ini==null) return '';
+  const p=n=>String(n).padStart(2,'0');
+  return ini===fim ? p(ini) : `${p(ini)}–${p(fim)}`;
 }
 function gerarEscala(){
   const ano=gerState.ano, mes=gerState.mes, N=diasNoMes(ano,mes);
@@ -998,8 +1013,8 @@ function buildSchedTable(escala,editable){
     const js=new Date(ano,mes,d).getDay();
     head+=`<th class="${js===0?'sun-h':''}">${d}<br><span style="font-weight:400;font-size:10px">${DOW_ABBR[js]}</span></th>`;
   }
-  for(let w=0;w<nS;w++) head+=`<th>Sem ${w+1}</th>`;
-  head+=`<th>Total</th>`;
+  for(let w=0;w<nS;w++) head+=`<th title="Semana ${w+1} (Domingo a Sábado)">Sem ${w+1}<br><span style="font-weight:400;font-size:9px;opacity:.75">${semanaLabelRange(ano,mes,w)}</span></th>`;
+  head+=`<th>Total<br><span style="font-weight:400;font-size:9px;opacity:.75">mês</span></th>`;
 
   // contagem trabalhando por dia
   const countDia=new Array(N+1).fill(0);
@@ -1041,7 +1056,10 @@ function legendHTML(){
     <div class="item"><b>7h20</b> = jornada padrão</div>
     <div class="item"><b>10h</b> = jornada contínua</div>
     <div class="item">🕒 <b>00:00–00:00</b> = entrada–saída do dia</div>
-  </div>`;
+    <div class="item"><b>Sem 1..N</b> = horas por semana (Domingo a Sábado)</div>
+    <div class="item"><b>Total mês</b> = soma exata das horas do mês</div>
+  </div>
+  <div class="aviso-previsao">⚠️ <b>Atenção:</b> os horários e a carga horária exibidos nesta escala são apenas uma <b>previsão / planejamento</b>. As horas <b>válidas</b> para pagamento e controle são exclusivamente as registradas no programa de controle de ponto <b>Stellantis</b>.</div>`;
 }
 
 /* ---------- PASSO 3 (edição) ---------- */
@@ -1319,9 +1337,8 @@ function exportarPDF(id){
       doc.setFontSize(5.2);doc.text(DOW_ABBR[js],x+dayW/2,y+6.4,{align:'center'});
       x+=dayW;
     }
-    doc.setFontSize(6);
-    for(let w=0;w<nS;w++){doc.setFillColor(...PDF_COLORS.header);doc.rect(x,y,dayW,headH,'F');doc.text('S'+(w+1),x+dayW/2,y+headH/2+1.5,{align:'center'});x+=dayW}
-    doc.setFillColor(...PDF_COLORS.gold);doc.rect(x,y,dayW,headH,'F');doc.setTextColor(94,0,0);doc.text('Tot',x+dayW/2,y+headH/2+1.5,{align:'center'});
+    for(let w=0;w<nS;w++){doc.setFillColor(...PDF_COLORS.header);doc.rect(x,y,dayW,headH,'F');doc.setFontSize(6);doc.text('S'+(w+1),x+dayW/2,y+3.2,{align:'center'});doc.setFontSize(4.4);doc.text(semanaLabelRange(e.ano,e.mes,w),x+dayW/2,y+6.4,{align:'center'});x+=dayW}
+    doc.setFillColor(...PDF_COLORS.gold);doc.rect(x,y,dayW,headH,'F');doc.setTextColor(94,0,0);doc.setFontSize(6);doc.text('Tot',x+dayW/2,y+3.2,{align:'center'});doc.setFontSize(4.4);doc.text('mês',x+dayW/2,y+6.4,{align:'center'});
   }
 
   let y=y0;
@@ -1408,6 +1425,19 @@ function exportarPDF(id){
   doc.text('7h20 = jornada padrão (7h20 trabalho + 30min intervalo)   |   10h = jornada contínua (10h trabalho + 2h intervalo)   |   Regime 6x1',ML,y);
   y+=4;
   doc.text('Em cada dia de trabalho é exibido o horário de entrada e saída (ex.: 09:00-16:50).',ML,y);
+  y+=4;
+  doc.text('Sem 1..N = total de horas por semana (contadas de Domingo a Sábado)   |   Tot mês = soma exata das horas do mês.',ML,y);
+  y+=6;
+  // Aviso de previsão / ponto Stellantis (destacado)
+  if(y+12>PH){doc.addPage();y=14}
+  const avW=PW-ML-MR;
+  doc.setFillColor(255,248,225);doc.setDrawColor(212,175,55);doc.setLineWidth(0.5);
+  doc.rect(ML,y-3.5,avW,10,'FD');
+  doc.setTextColor(122,92,0);doc.setFont('helvetica','bold');doc.setFontSize(7.2);
+  doc.text('ATENCAO: Esta escala e apenas uma PREVISAO / planejamento.',ML+2.5,y+0.3);
+  doc.setFont('helvetica','normal');
+  doc.text('As horas validas para pagamento e controle sao exclusivamente as registradas no programa de controle de ponto Stellantis.',ML+2.5,y+4);
+  doc.setLineWidth(0.2);
 
   // rodapé
   const pages=doc.internal.getNumberOfPages();
