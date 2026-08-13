@@ -169,6 +169,12 @@ table.sched td.total{background:var(--accent);font-weight:800;color:var(--primar
 .aviso-previsao{margin-top:14px;padding:12px 16px;background:rgba(255,193,7,.14);border:1px solid rgba(212,175,55,.55);border-left:5px solid var(--accent,#d4af37);border-radius:10px;font-size:13px;line-height:1.5;color:#5a4600}
 .daycount{font-size:11px;font-weight:700;background:#eceef2}
 
+/* etiqueta de função / cargo */
+.func-tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600;line-height:1.5;white-space:nowrap}
+.sched .name .func-tag{font-size:10px;padding:1px 7px;margin-top:2px}
+.sched td.name{border-left:5px solid transparent}
+.name-func{display:block}
+
 /* botão remover colaborador dentro da tabela (modo edição) */
 .rowdel{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:6px;border:none;border-radius:50%;background:#f8d7da;color:#a11;font-size:12px;line-height:1;cursor:pointer;vertical-align:middle}
 .rowdel:hover{background:#e74c3c;color:#fff}
@@ -486,6 +492,41 @@ function confirmDialog(msg,onYes,yesLabel='Confirmar'){
 /* ---------- Utilidades ---------- */
 function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function setorNome(id){const s=DB.setores().find(x=>x.id===id);return s?s.nome:'(removido)'}
+
+/* ---------- Função / Cargo: cores e utilidades ---------- */
+// paleta de cores estáveis por função (fundo claro + borda/texto escuro)
+const FUNC_PALETTE=[
+  {bg:'#e3f2fd',bd:'#1565c0'}, // azul
+  {bg:'#e8f5e9',bd:'#2e7d32'}, // verde
+  {bg:'#fff3e0',bd:'#e65100'}, // laranja
+  {bg:'#f3e5f5',bd:'#6a1b9a'}, // roxo
+  {bg:'#fce4ec',bd:'#ad1457'}, // rosa
+  {bg:'#e0f7fa',bd:'#00838f'}, // ciano
+  {bg:'#f9fbe7',bd:'#9e9d24'}, // lima
+  {bg:'#efebe9',bd:'#5d4037'}  // marrom
+];
+function funcNorm(fn){return (fn||'').trim().toLowerCase()}
+function corFuncao(fn){
+  const k=funcNorm(fn);
+  if(!k) return {bg:'#f4f5f8',bd:'#9aa0a6'}; // sem função = cinza
+  let h=0; for(let i=0;i<k.length;i++){h=(h*31+k.charCodeAt(i))>>>0}
+  return FUNC_PALETTE[h%FUNC_PALETTE.length];
+}
+function corFuncaoStyle(fn){const c=corFuncao(fn);return `background:${c.bg};color:${c.bd};border:1px solid ${c.bd}`}
+function hexToRgb(hex){const h=hex.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+// lista de funções já cadastradas (para o autocompletar)
+function funcoesExistentes(){
+  const set=new Set();
+  DB.funcionarios().forEach(f=>{if(f.funcao&&f.funcao.trim())set.add(f.funcao.trim())});
+  return Array.from(set).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+}
+// função de um registro da escala (usa a gravada; se faltar, busca no cadastro)
+function funcaoDe(fid,reg){
+  if(reg&&reg.funcao!=null&&reg.funcao!=='') return reg.funcao;
+  const f=DB.funcionarios().find(x=>x.id===fid);
+  return f&&f.funcao?f.funcao:'';
+}
+
 function diasNoMes(ano,mes){return new Date(ano,mes+1,0).getDate()} // mes 0-11
 // mapeia getDay() (0=Dom..6=Sab) para indice DIAS_SEMANA (0=Seg..6=Dom)
 function dowIndex(jsDay){return jsDay===0?6:jsDay-1}
@@ -698,10 +739,11 @@ function renderFuncionarios(){
         </div>
         <button class="btn" onclick="modalFunc()">➕ Novo Funcionário</button>
       </div>
-      ${funcs.length? `<table class="data"><thead><tr><th>Nome</th><th>Setor</th><th>Turno Predominante</th><th style="width:170px;text-align:right">Ações</th></tr></thead><tbody>
+      ${funcs.length? `<table class="data"><thead><tr><th>Nome</th><th>Setor</th><th>Função / Cargo</th><th>Turno Predominante</th><th style="width:170px;text-align:right">Ações</th></tr></thead><tbody>
         ${funcs.map(f=>`<tr>
           <td><b>${esc(f.nome)}</b></td>
           <td>${esc(setorNome(f.setorId))}</td>
+          <td>${f.funcao?`<span class="func-tag" style="${corFuncaoStyle(f.funcao)}">${esc(f.funcao)}</span>`:'<span class="tip">—</span>'}</td>
           <td><span class="badge">${esc(f.turno)}</span>${(f.horario&&(f.horario.entP||f.horario.saiP||f.horario.ent10||f.horario.sai10))?' <span class="badge" style="background:rgba(212,175,55,.25);color:#7a5c00" title="Horário personalizado">🕒 personalizado</span>':''}</td>
           <td style="text-align:right">
             <button class="btn secondary sm" onclick="modalFunc('${f.id}')">✏️ Editar</button>
@@ -721,6 +763,10 @@ function modalFunc(id){
       <input id="fNome" placeholder="Nome do colaborador" value="${f?esc(f.nome):''}" maxlength="60"></div>
      <div class="field" style="margin-bottom:14px"><label>Setor</label>
       <select id="fSetor">${setores.map(s=>`<option value="${s.id}" ${f&&f.setorId===s.id?'selected':''}>${esc(s.nome)}</option>`).join('')}</select></div>
+     <div class="field" style="margin-bottom:14px"><label>Função / Cargo</label>
+      <input id="fFuncao" list="funcoesList" placeholder='Ex.: Cozinheiro, Ajudante de cozinha, Garçom...' value="${f?esc(f.funcao||''):''}" maxlength="40">
+      <datalist id="funcoesList">${funcoesExistentes().map(fn=>`<option value="${esc(fn)}"></option>`).join('')}</datalist>
+      <span class="tip">Separa os colaboradores por cor e ordem na escala (ex.: Cozinheiro x Ajudante de cozinha).</span></div>
      <div class="field" style="margin-bottom:14px"><label>Turno predominante</label>
       <input id="fTurno" placeholder='Ex.: Almoço, Janta, Integral' value="${f?esc(f.turno):''}" maxlength="30">
       <span class="tip">Este será o turno pré-preenchido ao gerar a escala (pode ser ajustado depois).</span></div>
@@ -747,6 +793,7 @@ function modalFunc(id){
   document.getElementById('fSave').onclick=()=>{
     const nome=document.getElementById('fNome').value.trim();
     const setorId=document.getElementById('fSetor').value;
+    const funcao=document.getElementById('fFuncao').value.trim();
     const turno=document.getElementById('fTurno').value.trim()||'Almoço';
     if(!nome){toast('Informe o nome.','error');return}
     if(!setorId){toast('Selecione o setor.','error');return}
@@ -761,8 +808,8 @@ function modalFunc(id){
       if(hh.entP||hh.saiP||hh.ent10||hh.sai10) horario=hh;
     }
     let arr=DB.funcionarios();
-    if(f){Object.assign(f,{nome,setorId,turno,horario});arr=arr.map(x=>x.id===id?f:x)}
-    else arr.push({id:uid(),nome,setorId,turno,horario});
+    if(f){Object.assign(f,{nome,setorId,funcao,turno,horario});arr=arr.map(x=>x.id===id?f:x)}
+    else arr.push({id:uid(),nome,setorId,funcao,turno,horario});
     DB.saveFuncionarios(arr);closeModal();renderFuncionarios();
     toast(f?'Funcionário atualizado!':'Funcionário criado!','success');
   };
@@ -978,13 +1025,18 @@ function gerarEscala(){
       const hr=resolveHorario(setor,f,cfg.turno,jornada);
       dias[d]={status,turno:cfg.turno,jornada,entrada:hr.entrada,saida:hr.saida};
     }
-    dados[f.id]={funcId:f.id,nome:f.nome,turnoPredominante:f.turno,dias};
+    dados[f.id]={funcId:f.id,nome:f.nome,funcao:f.funcao||'',turnoPredominante:f.turno,dias};
   });
+  // agrupa por função (mesma função junta) e, dentro dela, por nome
+  const ordemOrdenada=funcs.slice().sort((a,b)=>
+    funcNorm(a.funcao).localeCompare(funcNorm(b.funcao),'pt-BR') ||
+    (a.nome||'').localeCompare(b.nome||'','pt-BR')
+  ).map(f=>f.id);
   gerState.escala={
     id:gerState.editId||uid(),
     setorId:gerState.setorId, setorNome:setorNome(gerState.setorId),
     ano,mes,
-    ordem:funcs.map(f=>f.id),
+    ordem:ordemOrdenada,
     dados,
     criadoEm:new Date().toISOString()
   };
@@ -1060,7 +1112,10 @@ function buildSchedTable(escala,editable,opts){
     const reg=escala.dados[fid];if(!reg)return;
     const sem=horasSemanais(reg,ano,mes);
     const delBtn=editable?`<button class="rowdel" title="Remover da escala" onclick="event.stopPropagation();removerColaborador('${fid}')">✕</button> `:'';
-    let r=`<td class="name">${delBtn}${esc(reg.nome)}</td>`;
+    const fn=funcaoDe(fid,reg);
+    const cor=corFuncao(fn);
+    const fnTag=fn?`<span class="name-func"><span class="func-tag" style="${corFuncaoStyle(fn)}">${esc(fn)}</span></span>`:'';
+    let r=`<td class="name" style="border-left-color:${cor.bd}">${delBtn}${esc(reg.nome)}${fnTag}</td>`;
     for(let d=1;d<=N;d++){
       const cell=reg.dias[d];
       if(cell.status===ST_TRABALHO) countDia[d]++;
@@ -1101,7 +1156,7 @@ function legendHTML(hideHours){
     ${hideHours?'':`<div class="item"><b>Sem 1..N</b> = horas por semana (Domingo a Sábado)</div>
     <div class="item"><b>Total mês</b> = soma exata das horas do mês</div>`}
   </div>
-  <div class="aviso-previsao">⚠️ <b>Atenção:</b> os horários e a carga horária exibidos nesta escala são apenas uma <b>previsão / planejamento</b>. As horas <b>válidas</b> para pagamento e controle são exclusivamente as registradas no programa de controle de ponto <b>Stellantis</b>.</div>`;
+  <div class="aviso-previsao">⚠️ <b>Atenção:</b> os horários e a carga horária exibidos nesta escala são apenas uma <b>previsão / planejamento</b>. As horas <b>válidas</b> para pagamento e controle são exclusivamente as registradas no programa de controle de ponto <b>Stelanto</b>.</div>`;
 }
 
 /* ---------- PASSO 3 (edição) ---------- */
@@ -1130,14 +1185,21 @@ function refreshStep3(){
 /* ---------- GERENCIAR COLABORADORES DA ESCALA ---------- */
 function colabPanelHTML(e){
   const chips=e.ordem.map(fid=>{
-    const nome=e.dados[fid]?e.dados[fid].nome:'(?)';
-    return `<span class="colchip"><span class="cc-name">${esc(nome)}</span>
+    const reg=e.dados[fid];
+    const nome=reg?reg.nome:'(?)';
+    const fn=funcaoDe(fid,reg);
+    const cor=corFuncao(fn);
+    const fnTag=fn?` <span class="func-tag" style="${corFuncaoStyle(fn)}">${esc(fn)}</span>`:'';
+    return `<span class="colchip" style="border-left:5px solid ${cor.bd}"><span class="cc-name">${esc(nome)}</span>${fnTag}
       <button class="cc-swap" title="Trocar por outro colaborador" onclick="trocarColaborador('${fid}')">🔁</button>
       <button class="cc-del" title="Remover da escala" onclick="removerColaborador('${fid}')">✕</button></span>`;
   }).join('');
   return `<div class="colab-manage">
     <div class="cm-head"><b>👥 Colaboradores nesta escala (${e.ordem.length})</b>
-      <button class="btn secondary sm" onclick="abrirAddColaborador()">➕ Adicionar colaborador</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn secondary sm" onclick="ordenarPorFuncao()">🎨 Agrupar por função</button>
+        <button class="btn secondary sm" onclick="abrirAddColaborador()">➕ Adicionar colaborador</button>
+      </div></div>
     <div class="colchips">${chips||'<span class="tip">Nenhum colaborador.</span>'}</div>
   </div>`;
 }
@@ -1175,7 +1237,7 @@ function confirmarAddColaborador(){
     const hr=resolveHorario(setor,func,turno,jornada);
     dias[d]={status,turno,jornada,entrada:hr.entrada,saida:hr.saida};
   }
-  e.dados[fid]={funcId:fid,nome:func.nome,turnoPredominante:func.turno,dias};
+  e.dados[fid]={funcId:fid,nome:func.nome,funcao:func.funcao||'',turnoPredominante:func.turno,dias};
   e.ordem.push(fid);
   closeModal();refreshStep3();toast('Colaborador adicionado à escala.','success');
 }
@@ -1213,10 +1275,18 @@ function confirmarTroca(fid){
     const hr=(c.status===ST_TRABALHO)?resolveHorario(setor,func,c.turno,c.jornada):{entrada:'',saida:''};
     dias[d]={status:c.status,turno:c.turno,jornada:c.jornada,entrada:hr.entrada,saida:hr.saida};
   });
-  e.dados[novo]={funcId:novo,nome:func.nome,turnoPredominante:func.turno,dias};
+  e.dados[novo]={funcId:novo,nome:func.nome,funcao:func.funcao||'',turnoPredominante:func.turno,dias};
   delete e.dados[fid];
   e.ordem=e.ordem.map(x=>x===fid?novo:x);
   closeModal();refreshStep3();toast('Colaborador trocado.','success');
+}
+function ordenarPorFuncao(){
+  const e=gerState.escala;
+  e.ordem=e.ordem.slice().sort((a,b)=>
+    funcNorm(funcaoDe(a,e.dados[a])).localeCompare(funcNorm(funcaoDe(b,e.dados[b])),'pt-BR') ||
+    ((e.dados[a]&&e.dados[a].nome)||'').localeCompare((e.dados[b]&&e.dados[b].nome)||'','pt-BR')
+  );
+  refreshStep3();toast('Colaboradores agrupados por função.','success');
 }
 
 function editCell(fid,d){
@@ -1507,12 +1577,26 @@ function exportarPDF(id,opts){
     // quebra de página
     if(y+rowH>PH-30){doc.addPage();y=14;drawHeader(y);y+=headH}
     let x=x0;
-    // nome
-    doc.setFillColor(247,247,249);doc.rect(x,y,nameW,rowH,'F');
+    // nome (com cor / função)
+    const fn=funcaoDe(fid,reg);
+    const cor=corFuncao(fn);
+    const bgRGB=fn?hexToRgb(cor.bg):[247,247,249];
+    const bdRGB=hexToRgb(cor.bd);
+    doc.setFillColor(...bgRGB);doc.rect(x,y,nameW,rowH,'F');
     doc.setDrawColor(220,220,220);doc.rect(x,y,nameW,rowH);
+    // barra lateral colorida
+    doc.setFillColor(...bdRGB);doc.rect(x,y,1.6,rowH,'F');
     doc.setTextColor(...PDF_COLORS.text);doc.setFont('helvetica','bold');doc.setFontSize(6.3);
     let nm=reg.nome;if(nm.length>22)nm=nm.slice(0,21)+'…';
-    doc.text(nm,x+1.5,y+rowH/2+1.5);
+    if(fn){
+      doc.text(nm,x+2.8,y+rowH/2-0.6);
+      doc.setFont('helvetica','normal');doc.setFontSize(5);doc.setTextColor(...bdRGB);
+      let fnl=fn;if(fnl.length>24)fnl=fnl.slice(0,23)+'…';
+      doc.text(fnl,x+2.8,y+rowH/2+3.2);
+      doc.setTextColor(...PDF_COLORS.text);
+    }else{
+      doc.text(nm,x+2.8,y+rowH/2+1.5);
+    }
     x+=nameW;
     doc.setFont('helvetica','normal');
     for(let d=1;d<=N;d++){
@@ -1586,7 +1670,7 @@ function exportarPDF(id,opts){
   doc.text('Em cada dia de trabalho é exibido o horário de entrada e saída (ex.: 09:00-16:50).',ML,y);
   y+=4;
   if(!hideHours){doc.text('Sem 1..N = total de horas por semana (contadas de Domingo a Sábado)   |   Tot mês = soma exata das horas do mês.',ML,y);y+=6;}
-  // Aviso de previsão / ponto Stellantis (destacado)
+  // Aviso de previsão / ponto Stelanto (destacado)
   if(y+12>PH){doc.addPage();y=14}
   const avW=PW-ML-MR;
   doc.setFillColor(255,248,225);doc.setDrawColor(212,175,55);doc.setLineWidth(0.5);
@@ -1594,7 +1678,7 @@ function exportarPDF(id,opts){
   doc.setTextColor(122,92,0);doc.setFont('helvetica','bold');doc.setFontSize(7.2);
   doc.text('ATENCAO: Esta escala e apenas uma PREVISAO / planejamento.',ML+2.5,y+0.3);
   doc.setFont('helvetica','normal');
-  doc.text('As horas validas para pagamento e controle sao exclusivamente as registradas no programa de controle de ponto Stellantis.',ML+2.5,y+4);
+  doc.text('As horas validas para pagamento e controle sao exclusivamente as registradas no programa de controle de ponto Stelanto.',ML+2.5,y+4);
   doc.setLineWidth(0.2);
 
   // rodapé
