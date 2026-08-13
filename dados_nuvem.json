@@ -9395,17 +9395,17 @@
       "ano": 2026,
       "mes": 7,
       "ordem": [
+        "mr9dxa2z1hgu5",
+        "mr9dyiusi6szf",
+        "mr9dxzpsocsup",
+        "mr9dy75lkqhvq",
+        "ms9gesmpipvkb",
+        "ms9gkkzyfmrru",
+        "mr9dwzux0ldv9",
         "mr9dwcg5y014h",
         "mr9dwl26px0lf",
         "mr9dwt14x2jz3",
-        "mr9dwzux0ldv9",
-        "mr9dxa2z1hgu5",
-        "mr9dxzpsocsup",
-        "mr9dy75lkqhvq",
-        "mr9dyiusi6szf",
-        "mr9lra8ra8fb9",
-        "ms9gesmpipvkb",
-        "ms9gkkzyfmrru"
+        "mr9lra8ra8fb9"
       ],
       "dados": {
         "mr9dwcg5y014h": {
@@ -11876,5 +11876,5 @@
       "criadoEm": "2026-07-31T21:37:02.879Z"
     }
   ],
-  "versao": 79
+  "versao": 80
 }
