@@ -215,8 +215,9 @@
       "id": "mr9dxa2z1hgu5",
       "nome": "CRISTIANE",
       "setorId": "mr0z5hu9b4rcl",
-      "turno": "Amoço",
-      "horario": null
+      "turno": "Almoço",
+      "horario": null,
+      "funcao": "Ajudante de Cozinha"
     },
     {
       "id": "mr9dxzpsocsup",
@@ -11876,5 +11877,5 @@
       "criadoEm": "2026-07-31T21:37:02.879Z"
     }
   ],
-  "versao": 71
+  "versao": 72
 }
