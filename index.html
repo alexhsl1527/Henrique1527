@@ -169,6 +169,39 @@ table.sched td.total{background:var(--accent);font-weight:800;color:var(--primar
 .aviso-previsao{margin-top:14px;padding:12px 16px;background:rgba(255,193,7,.14);border:1px solid rgba(212,175,55,.55);border-left:5px solid var(--accent,#d4af37);border-radius:10px;font-size:13px;line-height:1.5;color:#5a4600}
 .daycount{font-size:11px;font-weight:700;background:#eceef2}
 
+/* botão remover colaborador dentro da tabela (modo edição) */
+.rowdel{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:6px;border:none;border-radius:50%;background:#f8d7da;color:#a11;font-size:12px;line-height:1;cursor:pointer;vertical-align:middle}
+.rowdel:hover{background:#e74c3c;color:#fff}
+
+/* painel de gerenciamento de colaboradores (modo edição) */
+.colab-manage{background:#fff;border:1px solid #e3e3e8;border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.cm-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.cm-head h4{margin:0;font-size:15px}
+.colchips{display:flex;flex-wrap:wrap;gap:8px}
+.colchip{display:inline-flex;align-items:center;gap:6px;background:#f4f5f8;border:1px solid #e0e0e6;border-radius:20px;padding:5px 6px 5px 12px;font-size:13px}
+.colchip .cc-name{font-weight:600}
+.colchip button{border:none;border-radius:50%;width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer;background:#e7e9ef;color:#444}
+.colchip button.cc-swap:hover{background:#d4af37;color:#fff}
+.colchip button.cc-del:hover{background:#e74c3c;color:#fff}
+
+/* checkbox ocultar horas */
+.chk-hours{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;user-select:none}
+.chk-hours input{width:16px;height:16px;cursor:pointer}
+
+/* impressão da escala */
+.printonly{display:none}
+@media print{
+  body.printing-escala .topbar,
+  body.printing-escala #sidebar,
+  body.printing-escala #nav,
+  body.printing-escala .noprint{display:none !important}
+  body.printing-escala #content{margin:0 !important;padding:0 !important;width:100% !important}
+  body.printing-escala .printonly{display:block}
+  body.printing-escala .print-title{font-size:16px;font-weight:700;margin:0 0 10px}
+  body.printing-escala .hcol{display:table-cell}
+  @page{size:landscape;margin:8mm}
+}
+
 .helpbox{background:#fff8e1;border-left:4px solid var(--accent);padding:14px 18px;border-radius:8px;font-size:13.5px;margin-bottom:16px}
 .helpbox b{color:var(--primary-dark)}
 .tip{font-size:12.5px;color:var(--muted);margin-top:6px}
@@ -1006,15 +1039,19 @@ function cellTime(cell){
   if(!cell.entrada && !cell.saida) return '';
   return `<span class="cell-sub cell-time">${esc(cell.entrada||'--:--')}–${esc(cell.saida||'--:--')}</span>`;
 }
-function buildSchedTable(escala,editable){
+function buildSchedTable(escala,editable,opts){
+  opts=opts||{};
+  const hideHours=!!opts.hideHours;
   const {ano,mes}=escala, N=diasNoMes(ano,mes), nS=numSemanas(ano,mes);
   let head=`<th class="name-h">Colaborador</th>`;
   for(let d=1;d<=N;d++){
     const js=new Date(ano,mes,d).getDay();
     head+=`<th class="${js===0?'sun-h':''}">${d}<br><span style="font-weight:400;font-size:10px">${DOW_ABBR[js]}</span></th>`;
   }
-  for(let w=0;w<nS;w++) head+=`<th title="Semana ${w+1} (Domingo a Sábado)">Sem ${w+1}<br><span style="font-weight:400;font-size:9px;opacity:.75">${semanaLabelRange(ano,mes,w)}</span></th>`;
-  head+=`<th>Total<br><span style="font-weight:400;font-size:9px;opacity:.75">mês</span></th>`;
+  if(!hideHours){
+    for(let w=0;w<nS;w++) head+=`<th class="hcol" title="Semana ${w+1} (Domingo a Sábado)">Sem ${w+1}<br><span style="font-weight:400;font-size:9px;opacity:.75">${semanaLabelRange(ano,mes,w)}</span></th>`;
+    head+=`<th class="hcol">Total<br><span style="font-weight:400;font-size:9px;opacity:.75">mês</span></th>`;
+  }
 
   // contagem trabalhando por dia
   const countDia=new Array(N+1).fill(0);
@@ -1022,7 +1059,8 @@ function buildSchedTable(escala,editable){
   escala.ordem.forEach(fid=>{
     const reg=escala.dados[fid];if(!reg)return;
     const sem=horasSemanais(reg,ano,mes);
-    let r=`<td class="name">${esc(reg.nome)}</td>`;
+    const delBtn=editable?`<button class="rowdel" title="Remover da escala" onclick="event.stopPropagation();removerColaborador('${fid}')">✕</button> `:'';
+    let r=`<td class="name">${delBtn}${esc(reg.nome)}</td>`;
     for(let d=1;d<=N;d++){
       const cell=reg.dias[d];
       if(cell.status===ST_TRABALHO) countDia[d]++;
@@ -1030,23 +1068,27 @@ function buildSchedTable(escala,editable){
       const ttHr=(cell.status===ST_TRABALHO&&(cell.entrada||cell.saida))?` (${cell.entrada||'--:--'}–${cell.saida||'--:--'})`:'';
       r+=`<td class="cell ${cellClass(cell)}" ${oc} title="Dia ${d}${ttHr}">${cellMain(cell)}<span class="cell-sub">${cellSub(cell)}</span>${cellTime(cell)}</td>`;
     }
-    sem.forEach(h=>r+=`<td class="hours">${fmtH(h)}</td>`);
-    const total=sem.reduce((a,b)=>a+b,0);
-    r+=`<td class="total">${fmtH(total)}</td>`;
+    if(!hideHours){
+      sem.forEach(h=>r+=`<td class="hours hcol">${fmtH(h)}</td>`);
+      const total=sem.reduce((a,b)=>a+b,0);
+      r+=`<td class="total hcol">${fmtH(total)}</td>`;
+    }
     rows+=`<tr>${r}</tr>`;
   });
   // linha de contagem
   let countRow=`<td class="name daycount">👥 Trabalhando</td>`;
   for(let d=1;d<=N;d++) countRow+=`<td class="daycount">${countDia[d]}</td>`;
-  for(let w=0;w<nS;w++) countRow+=`<td class="daycount"></td>`;
-  countRow+=`<td class="daycount"></td>`;
+  if(!hideHours){
+    for(let w=0;w<nS;w++) countRow+=`<td class="daycount hcol"></td>`;
+    countRow+=`<td class="daycount hcol"></td>`;
+  }
 
   return `<div class="sched-wrap"><table class="sched">
     <thead><tr>${head}</tr></thead>
     <tbody>${rows}<tr>${countRow}</tr></tbody>
-  </table></div>${legendHTML()}`;
+  </table></div>${legendHTML(hideHours)}`;
 }
-function legendHTML(){
+function legendHTML(hideHours){
   return `<div class="legend">
     <div class="item"><span class="sw c-lunch"></span> Almoço (trabalho)</div>
     <div class="item"><span class="sw c-dinner"></span> Janta (trabalho)</div>
@@ -1056,8 +1098,8 @@ function legendHTML(){
     <div class="item"><b>7h20</b> = jornada padrão</div>
     <div class="item"><b>10h</b> = jornada contínua</div>
     <div class="item">🕒 <b>00:00–00:00</b> = entrada–saída do dia</div>
-    <div class="item"><b>Sem 1..N</b> = horas por semana (Domingo a Sábado)</div>
-    <div class="item"><b>Total mês</b> = soma exata das horas do mês</div>
+    ${hideHours?'':`<div class="item"><b>Sem 1..N</b> = horas por semana (Domingo a Sábado)</div>
+    <div class="item"><b>Total mês</b> = soma exata das horas do mês</div>`}
   </div>
   <div class="aviso-previsao">⚠️ <b>Atenção:</b> os horários e a carga horária exibidos nesta escala são apenas uma <b>previsão / planejamento</b>. As horas <b>válidas</b> para pagamento e controle são exclusivamente as registradas no programa de controle de ponto <b>Stellantis</b>.</div>`;
 }
@@ -1069,6 +1111,7 @@ function drawStep3(){
   b.innerHTML=`
     <div class="helpbox">📌 <b>Passo 3:</b> escala de <b>${esc(e.setorNome)}</b> — <b>${MESES[e.mes]} ${e.ano}</b>.<br>
     Clique em qualquer célula para ajustar status (Trabalho / Folga / Folga Domingo), turno (Almoço ↔ Janta) e jornada (7h20 ↔ 10h).</div>
+    <div id="colabPanel">${colabPanelHTML(e)}</div>
     <div id="schedArea">${buildSchedTable(e,true)}</div>
     <div class="toolbar" style="margin-top:20px">
       <button class="btn secondary" onclick="gerState.step=2;drawGerar()">⬅ Voltar</button>
@@ -1077,7 +1120,104 @@ function drawStep3(){
     </div>`;
   document.getElementById('g3Save').onclick=salvarEscala;
 }
-function refreshStep3(){document.getElementById('schedArea').innerHTML=buildSchedTable(gerState.escala,true)}
+function refreshStep3(){
+  const cp=document.getElementById('colabPanel');
+  if(cp) cp.innerHTML=colabPanelHTML(gerState.escala);
+  const sa=document.getElementById('schedArea');
+  if(sa) sa.innerHTML=buildSchedTable(gerState.escala,true);
+}
+
+/* ---------- GERENCIAR COLABORADORES DA ESCALA ---------- */
+function colabPanelHTML(e){
+  const chips=e.ordem.map(fid=>{
+    const nome=e.dados[fid]?e.dados[fid].nome:'(?)';
+    return `<span class="colchip"><span class="cc-name">${esc(nome)}</span>
+      <button class="cc-swap" title="Trocar por outro colaborador" onclick="trocarColaborador('${fid}')">🔁</button>
+      <button class="cc-del" title="Remover da escala" onclick="removerColaborador('${fid}')">✕</button></span>`;
+  }).join('');
+  return `<div class="colab-manage">
+    <div class="cm-head"><b>👥 Colaboradores nesta escala (${e.ordem.length})</b>
+      <button class="btn secondary sm" onclick="abrirAddColaborador()">➕ Adicionar colaborador</button></div>
+    <div class="colchips">${chips||'<span class="tip">Nenhum colaborador.</span>'}</div>
+  </div>`;
+}
+function abrirAddColaborador(){
+  const e=gerState.escala;
+  const jaTem=new Set(e.ordem);
+  const disp=DB.funcionarios().filter(f=>!jaTem.has(f.id));
+  if(!disp.length){toast('Todos os colaboradores cadastrados já estão nesta escala.','error');return;}
+  const sameSetor=disp.filter(f=>f.setorId===e.setorId);
+  const others=disp.filter(f=>f.setorId!==e.setorId);
+  const opt=f=>`<option value="${f.id}">${esc(f.nome)}</option>`;
+  const options=`${sameSetor.length?`<optgroup label="Do setor ${esc(e.setorNome)}">${sameSetor.map(opt).join('')}</optgroup>`:''}${others.length?`<optgroup label="Outros setores">${others.map(opt).join('')}</optgroup>`:''}`;
+  openModal('Adicionar colaborador à escala',
+    `<div class="field"><label>Colaborador</label><select id="addSel">${options}</select></div>
+     <div class="field"><label>Turno</label><select id="addTurno"><option value="Almoço">Almoço</option><option value="Janta">Janta</option></select></div>
+     <div class="field"><label>Folga semanal</label><select id="addFolga">${DIAS_SEMANA.map((d,i)=>`<option value="${i}" ${i===6?'selected':''}>${d}</option>`).join('')}<option value="-1">Sem folga fixa (definir clicando)</option></select></div>
+     <span class="tip">Os dias do mês são criados automaticamente. Depois clique nas células para ajustar folgas, turnos e horários.</span>`,
+    `<button class="btn secondary" onclick="closeModal()">Cancelar</button><button class="btn" onclick="confirmarAddColaborador()">Adicionar</button>`);
+}
+function confirmarAddColaborador(){
+  const e=gerState.escala;
+  const fid=document.getElementById('addSel').value;
+  const turno=document.getElementById('addTurno').value;
+  const folga=parseInt(document.getElementById('addFolga').value,10);
+  const func=DB.funcionarios().find(f=>f.id===fid); if(!func){toast('Colaborador não encontrado.','error');return;}
+  const setor=DB.setores().find(s=>s.id===e.setorId)||null;
+  const N=diasNoMes(e.ano,e.mes);
+  const dias={};
+  for(let d=1;d<=N;d++){
+    const js=new Date(e.ano,e.mes,d).getDay();
+    const dowIdx=dowIndex(js);
+    let status=ST_TRABALHO;
+    if(folga>=0 && dowIdx===folga) status=ST_FOLGA;
+    const jornada='padrao';
+    const hr=resolveHorario(setor,func,turno,jornada);
+    dias[d]={status,turno,jornada,entrada:hr.entrada,saida:hr.saida};
+  }
+  e.dados[fid]={funcId:fid,nome:func.nome,turnoPredominante:func.turno,dias};
+  e.ordem.push(fid);
+  closeModal();refreshStep3();toast('Colaborador adicionado à escala.','success');
+}
+function removerColaborador(fid){
+  const e=gerState.escala;
+  if(e.ordem.length<=1){toast('A escala precisa ter ao menos 1 colaborador.','error');return;}
+  const nome=e.dados[fid]?e.dados[fid].nome:'';
+  confirmDialog(`Remover <b>${esc(nome)}</b> desta escala? (não remove o cadastro do colaborador, apenas desta escala)`,()=>{
+    e.ordem=e.ordem.filter(x=>x!==fid);
+    delete e.dados[fid];
+    refreshStep3();toast('Colaborador removido da escala.','success');
+  },'Remover');
+}
+function trocarColaborador(fid){
+  const e=gerState.escala;
+  const disp=DB.funcionarios().filter(f=>!e.ordem.includes(f.id));
+  if(!disp.length){toast('Não há outros colaboradores cadastrados para a troca.','error');return;}
+  const opt=f=>`<option value="${f.id}">${esc(f.nome)}${f.setorId!==e.setorId?' (outro setor)':''}</option>`;
+  openModal('Trocar colaborador',
+    `<div class="field"><label>Substituir <b>${esc(e.dados[fid].nome)}</b> por:</label>
+      <select id="swapSel">${disp.map(opt).join('')}</select></div>
+     <span class="tip">Os dias já configurados (trabalho / folga / turno / jornada) são mantidos. Apenas o horário é recalculado para o novo colaborador.</span>`,
+    `<button class="btn secondary" onclick="closeModal()">Cancelar</button><button class="btn" onclick="confirmarTroca('${fid}')">Trocar</button>`);
+}
+function confirmarTroca(fid){
+  const e=gerState.escala;
+  const novo=document.getElementById('swapSel').value;
+  const func=DB.funcionarios().find(f=>f.id===novo); if(!func){toast('Colaborador não encontrado.','error');return;}
+  if(e.ordem.includes(novo)){toast('Esse colaborador já está na escala.','error');return;}
+  const setor=DB.setores().find(s=>s.id===e.setorId)||null;
+  const reg=e.dados[fid];
+  const dias={};
+  Object.keys(reg.dias).forEach(d=>{
+    const c=reg.dias[d];
+    const hr=(c.status===ST_TRABALHO)?resolveHorario(setor,func,c.turno,c.jornada):{entrada:'',saida:''};
+    dias[d]={status:c.status,turno:c.turno,jornada:c.jornada,entrada:hr.entrada,saida:hr.saida};
+  });
+  e.dados[novo]={funcId:novo,nome:func.nome,turnoPredominante:func.turno,dias};
+  delete e.dados[fid];
+  e.ordem=e.ordem.map(x=>x===fid?novo:x);
+  closeModal();refreshStep3();toast('Colaborador trocado.','success');
+}
 
 function editCell(fid,d){
   const cell=gerState.escala.dados[fid].dias[d];
@@ -1203,6 +1343,7 @@ function editarEscala(id){
    VISUALIZAR ESCALAS
    ============================================================ */
 let visualAbertaId=null;
+let visualHideHours=false;
 function renderVisualizar(){
   const escalas=DB.escalas().slice().sort((a,b)=> (b.ano-a.ano)||(b.mes-a.mes)|| (b.criadoEm>a.criadoEm?1:-1));
   const c=document.getElementById('content');
@@ -1247,22 +1388,34 @@ function abrirEscala(id){
   });
   const area=document.getElementById('visualArea');
   area.innerHTML=`
-    <div class="card">
-      <div class="toolbar">
+    <div class="card" id="escalaCard">
+      <div class="toolbar noprint">
         <h3 style="margin:0">${esc(e.setorNome||setorNome(e.setorId))} — ${MESES[e.mes]} ${e.ano}</h3>
         <div class="spacer"></div>
+        <label class="chk-hours" title="Esconde as colunas de horas ao imprimir / exportar"><input type="checkbox" id="chkHideHours" ${visualHideHours?'checked':''} onchange="toggleHideHours(this.checked)"> Ocultar colunas de horas</label>
         <button class="btn secondary" onclick="editarEscala('${e.id}')">✏️ Editar</button>
+        <button class="btn secondary" onclick="imprimirEscala()">🖨️ Imprimir</button>
         <button class="btn gold" onclick="exportarPDF('${e.id}')">📄 Exportar PDF</button>
       </div>
+      <div class="printonly print-title">${esc(e.setorNome||setorNome(e.setorId))} — ${MESES[e.mes]} ${e.ano}</div>
       <div class="grid cols-4" style="margin-bottom:18px">
         <div class="stat" style="padding:14px"><div class="icon" style="width:42px;height:42px;font-size:20px">⏱️</div><div><div class="num" style="font-size:22px">${fmtH(totalHoras)}</div><div class="lbl">Total de horas</div></div></div>
         <div class="stat" style="padding:14px;border-left-color:var(--accent)"><div class="icon" style="width:42px;height:42px;font-size:20px;background:rgba(212,175,55,.18)">👥</div><div><div class="num" style="font-size:22px">${e.ordem.length}</div><div class="lbl">Colaboradores</div></div></div>
         <div class="stat" style="padding:14px;border-left-color:#c62828"><div class="icon" style="width:42px;height:42px;font-size:20px;background:rgba(198,40,40,.12)">🏖️</div><div><div class="num" style="font-size:22px">${totalFolgas}</div><div class="lbl">Folgas semanais</div></div></div>
         <div class="stat" style="padding:14px;border-left-color:#1565c0"><div class="icon" style="width:42px;height:42px;font-size:20px;background:rgba(21,101,192,.12)">☀️</div><div><div class="num" style="font-size:22px">${totalFolgaDom}</div><div class="lbl">Folgas de domingo</div></div></div>
       </div>
-      ${buildSchedTable(e,false)}
+      ${buildSchedTable(e,false,{hideHours:visualHideHours})}
     </div>`;
   area.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function toggleHideHours(v){
+  visualHideHours=!!v;
+  if(visualAbertaId) abrirEscala(visualAbertaId);
+}
+function imprimirEscala(){
+  document.body.classList.add('printing-escala');
+  window.print();
+  setTimeout(()=>document.body.classList.remove('printing-escala'),500);
 }
 
 
@@ -1283,7 +1436,9 @@ function pdfCellColor(cell){
   if(t.includes('jant')||t.includes('noite')) return PDF_COLORS.dinner;
   return PDF_COLORS.work;
 }
-function exportarPDF(id){
+function exportarPDF(id,opts){
+  opts=opts||{};
+  const hideHours = (opts.hideHours!==undefined)?!!opts.hideHours:visualHideHours;
   const e=DB.escalas().find(x=>x.id===id);if(!e){toast('Escala não encontrada.','error');return}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
@@ -1316,7 +1471,7 @@ function exportarPDF(id){
 
   // Larguras de coluna
   const nameW=34;
-  const extraCols=nS+1; // semanas + total
+  const extraCols=hideHours?0:(nS+1); // semanas + total
   const usable=PW-ML-MR-nameW;
   const dayW=usable/(N+extraCols);
   let x0=ML, y0=24;
@@ -1337,8 +1492,10 @@ function exportarPDF(id){
       doc.setFontSize(5.2);doc.text(DOW_ABBR[js],x+dayW/2,y+6.4,{align:'center'});
       x+=dayW;
     }
-    for(let w=0;w<nS;w++){doc.setFillColor(...PDF_COLORS.header);doc.rect(x,y,dayW,headH,'F');doc.setFontSize(6);doc.text('S'+(w+1),x+dayW/2,y+3.2,{align:'center'});doc.setFontSize(4.4);doc.text(semanaLabelRange(e.ano,e.mes,w),x+dayW/2,y+6.4,{align:'center'});x+=dayW}
-    doc.setFillColor(...PDF_COLORS.gold);doc.rect(x,y,dayW,headH,'F');doc.setTextColor(94,0,0);doc.setFontSize(6);doc.text('Tot',x+dayW/2,y+3.2,{align:'center'});doc.setFontSize(4.4);doc.text('mês',x+dayW/2,y+6.4,{align:'center'});
+    if(!hideHours){
+      for(let w=0;w<nS;w++){doc.setFillColor(...PDF_COLORS.header);doc.rect(x,y,dayW,headH,'F');doc.setFontSize(6);doc.text('S'+(w+1),x+dayW/2,y+3.2,{align:'center'});doc.setFontSize(4.4);doc.text(semanaLabelRange(e.ano,e.mes,w),x+dayW/2,y+6.4,{align:'center'});x+=dayW}
+      doc.setFillColor(...PDF_COLORS.gold);doc.rect(x,y,dayW,headH,'F');doc.setTextColor(94,0,0);doc.setFontSize(6);doc.text('Tot',x+dayW/2,y+3.2,{align:'center'});doc.setFontSize(4.4);doc.text('mês',x+dayW/2,y+6.4,{align:'center'});
+    }
   }
 
   let y=y0;
@@ -1386,12 +1543,14 @@ function exportarPDF(id){
       x+=dayW;
     }
     // horas semanais
-    const sem=horasSemanais(reg,e.ano,e.mes);
-    doc.setFontSize(5.4);doc.setFont('helvetica','bold');
-    sem.forEach(h=>{doc.setFillColor(...PDF_COLORS.hours);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.setTextColor(...PDF_COLORS.text);doc.text(fmtH(h),x+dayW/2,y+rowH/2+1.5,{align:'center'});x+=dayW});
-    const total=sem.reduce((a,b)=>a+b,0);
-    doc.setFillColor(...PDF_COLORS.total);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.setTextColor(94,0,0);doc.text(fmtH(total),x+dayW/2,y+rowH/2+1.5,{align:'center'});
-    doc.setFont('helvetica','normal');
+    if(!hideHours){
+      const sem=horasSemanais(reg,e.ano,e.mes);
+      doc.setFontSize(5.4);doc.setFont('helvetica','bold');
+      sem.forEach(h=>{doc.setFillColor(...PDF_COLORS.hours);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.setTextColor(...PDF_COLORS.text);doc.text(fmtH(h),x+dayW/2,y+rowH/2+1.5,{align:'center'});x+=dayW});
+      const total=sem.reduce((a,b)=>a+b,0);
+      doc.setFillColor(...PDF_COLORS.total);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.setTextColor(94,0,0);doc.text(fmtH(total),x+dayW/2,y+rowH/2+1.5,{align:'center'});
+      doc.setFont('helvetica','normal');
+    }
     y+=rowH;
   });
 
@@ -1403,7 +1562,7 @@ function exportarPDF(id){
   doc.text('Trabalhando / dia',x+1.5,y+rowH/2+1.5);x+=nameW;
   doc.setFontSize(6);
   for(let d=1;d<=N;d++){doc.setFillColor(236,238,242);doc.rect(x,y,dayW,rowH,'F');doc.setDrawColor(225,225,225);doc.rect(x,y,dayW,rowH);doc.text(String(countDia[d]),x+dayW/2,y+rowH/2+1.5,{align:'center'});x+=dayW}
-  for(let w=0;w<nS+1;w++){doc.setFillColor(236,238,242);doc.rect(x,y,dayW,rowH,'F');doc.rect(x,y,dayW,rowH);x+=dayW}
+  if(!hideHours){for(let w=0;w<nS+1;w++){doc.setFillColor(236,238,242);doc.rect(x,y,dayW,rowH,'F');doc.rect(x,y,dayW,rowH);x+=dayW}}
   y+=rowH+6;
 
   // Legenda
@@ -1426,8 +1585,7 @@ function exportarPDF(id){
   y+=4;
   doc.text('Em cada dia de trabalho é exibido o horário de entrada e saída (ex.: 09:00-16:50).',ML,y);
   y+=4;
-  doc.text('Sem 1..N = total de horas por semana (contadas de Domingo a Sábado)   |   Tot mês = soma exata das horas do mês.',ML,y);
-  y+=6;
+  if(!hideHours){doc.text('Sem 1..N = total de horas por semana (contadas de Domingo a Sábado)   |   Tot mês = soma exata das horas do mês.',ML,y);y+=6;}
   // Aviso de previsão / ponto Stellantis (destacado)
   if(y+12>PH){doc.addPage();y=14}
   const avW=PW-ML-MR;
