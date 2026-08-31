@@ -253,9 +253,10 @@
     {
       "id": "mrv1neykacw8q",
       "nome": "JOANA",
-      "setorId": "mr0z6fr335s2n",
+      "setorId": "mr0z7l24epxru",
       "turno": "Janta",
-      "horario": null
+      "horario": null,
+      "funcao": ""
     },
     {
       "id": "ms6i7su7baphu",
@@ -16949,5 +16950,5 @@
       "criadoEm": "2026-08-31T21:19:31.881Z"
     }
   ],
-  "versao": 84
+  "versao": 85
 }
