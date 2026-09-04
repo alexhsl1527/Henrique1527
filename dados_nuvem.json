@@ -291,10 +291,11 @@
     },
     {
       "id": "mshxdpby8miwu",
-      "nome": "Kawan Raul",
+      "nome": "Ruan",
       "setorId": "mr0z6mqwfbikn",
       "turno": "almoço",
-      "horario": null
+      "horario": null,
+      "funcao": ""
     },
     {
       "id": "msqsjs33o01ad",
@@ -16951,5 +16952,5 @@
       "criadoEm": "2026-08-31T21:19:31.881Z"
     }
   ],
-  "versao": 87
+  "versao": 88
 }
