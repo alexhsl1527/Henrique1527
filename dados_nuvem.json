@@ -160,13 +160,6 @@
       "horario": null
     },
     {
-      "id": "mr4ys7h3b0y39",
-      "nome": "ÉRICA",
-      "setorId": "mr0z6fr335s2n",
-      "turno": "Janta",
-      "horario": null
-    },
-    {
       "id": "mr4yt1ik82mix",
       "nome": "ANA CALINNE",
       "setorId": "mr0z6fr335s2n",
@@ -20351,5 +20344,5 @@
       "criadoEm": "2026-09-30T19:44:12.682Z"
     }
   ],
-  "versao": 93
+  "versao": 94
 }
