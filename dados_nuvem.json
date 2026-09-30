@@ -20866,7 +20866,7 @@
               "turno": "Almoço",
               "jornada": "padrao",
               "entrada": "10:00",
-              "saida": "22:00"
+              "saida": "17:00"
             },
             "9": {
               "status": "trabalho",
@@ -21035,5 +21035,5 @@
       "criadoEm": "2026-09-30T20:32:44.666Z"
     }
   ],
-  "versao": 96
+  "versao": 97
 }
