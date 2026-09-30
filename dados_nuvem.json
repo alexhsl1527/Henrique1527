@@ -163,8 +163,9 @@
       "id": "mr4yt1ik82mix",
       "nome": "ANA CALINNE",
       "setorId": "mr0z6fr335s2n",
-      "turno": "Amoço",
-      "horario": null
+      "turno": "Janta",
+      "horario": null,
+      "funcao": ""
     },
     {
       "id": "mr4ytko0ia3nc",
@@ -20344,5 +20345,5 @@
       "criadoEm": "2026-09-30T19:44:12.682Z"
     }
   ],
-  "versao": 94
+  "versao": 95
 }
