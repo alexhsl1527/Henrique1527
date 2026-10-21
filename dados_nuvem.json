@@ -299,6 +299,14 @@
       "turno": "Janta",
       "horario": null,
       "funcao": "Churrasqueiro"
+    },
+    {
+      "id": "mvipg9djebk4u",
+      "nome": "Isabella",
+      "setorId": "mr0z7l24epxru",
+      "funcao": "Recreadora",
+      "turno": "Janta",
+      "horario": null
     }
   ],
   "escalas": [
@@ -21704,5 +21712,5 @@
       "criadoEm": "2026-10-21T22:47:38.533Z"
     }
   ],
-  "versao": 99
+  "versao": 100
 }
