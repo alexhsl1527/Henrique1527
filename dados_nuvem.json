@@ -21252,7 +21252,7 @@
             },
             "28": {
               "status": "trabalho",
-              "turno": "janta ",
+              "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
               "saida": "00:00"
@@ -21931,5 +21931,5 @@
       "criadoEm": "2026-10-21T22:47:38.533Z"
     }
   ],
-  "versao": 101
+  "versao": 102
 }
