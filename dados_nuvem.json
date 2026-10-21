@@ -21421,10 +21421,10 @@
             },
             "21": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "10:00",
+              "saida": "22:00"
             },
             "22": {
               "status": "folga_dom",
@@ -21639,9 +21639,9 @@
             },
             "21": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "22": {
@@ -21931,5 +21931,5 @@
       "criadoEm": "2026-10-21T22:47:38.533Z"
     }
   ],
-  "versao": 102
+  "versao": 103
 }
