@@ -21252,9 +21252,9 @@
             },
             "28": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "29": {
@@ -21724,24 +21724,24 @@
             },
             "2": {
               "status": "trabalho",
-              "turno": "Janta",
+              "turno": "Almoço",
               "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "3": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "4": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "5": {
               "status": "folga",
@@ -21755,42 +21755,42 @@
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "7": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "8": {
               "status": "trabalho",
               "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "9": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "10": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "11": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "12": {
               "status": "folga",
@@ -21804,42 +21804,42 @@
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "14": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "15": {
               "status": "trabalho",
               "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "16": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "17": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "18": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "19": {
               "status": "folga",
@@ -21853,42 +21853,42 @@
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "21": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "22": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "23": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "24": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "25": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "26": {
               "status": "folga",
@@ -21902,28 +21902,28 @@
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:30"
             },
             "28": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "29": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "30": {
               "status": "trabalho",
               "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
-              "saida": "00:00"
+              "saida": "23:00"
             }
           }
         }
@@ -21931,5 +21931,5 @@
       "criadoEm": "2026-10-21T22:47:38.533Z"
     }
   ],
-  "versao": 107
+  "versao": 108
 }
