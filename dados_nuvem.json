@@ -307,6 +307,19 @@
       "funcao": "Recreadora",
       "turno": "Janta",
       "horario": null
+    },
+    {
+      "id": "mvjj4m2ddmgcc",
+      "nome": "FRANCISCO",
+      "setorId": "mr0z6mqwfbikn",
+      "funcao": "",
+      "turno": "JANTA",
+      "horario": {
+        "entP": "17:00",
+        "saiP": "00:00",
+        "ent10": "",
+        "sai10": "22:00"
+      }
     }
   ],
   "escalas": [
@@ -21931,5 +21944,5 @@
       "criadoEm": "2026-10-21T22:47:38.533Z"
     }
   ],
-  "versao": 108
+  "versao": 109
 }
