@@ -23987,16 +23987,16 @@
             },
             "7": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "8": {
               "status": "trabalho",
               "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
+              "jornada": "continua",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "9": {
@@ -24377,5 +24377,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 120
+  "versao": 121
 }
