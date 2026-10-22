@@ -302,7 +302,7 @@
     },
     {
       "id": "mvipg9djebk4u",
-      "nome": "Isabella",
+      "nome": "ISABELLA",
       "setorId": "mr0z7l24epxru",
       "funcao": "Recreadora",
       "turno": "Janta",
@@ -21931,5 +21931,5 @@
       "criadoEm": "2026-10-21T22:47:38.533Z"
     }
   ],
-  "versao": 103
+  "versao": 104
 }
