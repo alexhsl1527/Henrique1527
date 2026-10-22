@@ -22055,9 +22055,9 @@
             },
             "14": {
               "status": "trabalho",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "15": {
@@ -22155,7 +22155,7 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "12:00",
+              "entrada": "13:00",
               "saida": "00:00"
             },
             "29": {
@@ -22275,7 +22275,7 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "13:00",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "15": {
@@ -22373,7 +22373,7 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "13:00",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "29": {
@@ -22408,9 +22408,9 @@
             "2": {
               "status": "trabalho",
               "turno": "almoço",
-              "jornada": "padrao",
+              "jornada": "continua",
               "entrada": "10:00",
-              "saida": "17:00"
+              "saida": "22:00"
             },
             "3": {
               "status": "folga",
@@ -22499,9 +22499,9 @@
             "15": {
               "status": "trabalho",
               "turno": "almoço",
-              "jornada": "padrao",
+              "jornada": "continua",
               "entrada": "10:00",
-              "saida": "17:00"
+              "saida": "22:00"
             },
             "16": {
               "status": "trabalho",
@@ -22711,7 +22711,7 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "12:00",
+              "entrada": "13:00",
               "saida": "00:00"
             },
             "15": {
@@ -22832,5 +22832,5 @@
       "criadoEm": "2026-10-22T12:53:59.099Z"
     }
   ],
-  "versao": 114
+  "versao": 115
 }
