@@ -21085,8 +21085,8 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "10:00",
-              "saida": "22:00"
+              "entrada": "12:00",
+              "saida": "00:00"
             },
             "3": {
               "status": "trabalho",
@@ -21176,7 +21176,7 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "12:00",
+              "entrada": "17:00",
               "saida": "00:00"
             },
             "16": {
@@ -21218,15 +21218,15 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "12:00",
-              "saida": "00:00"
+              "entrada": "10:00",
+              "saida": "22:00"
             },
             "22": {
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "10:00",
-              "saida": "22:00"
+              "entrada": "12:00",
+              "saida": "00:00"
             },
             "23": {
               "status": "trabalho",
@@ -21272,10 +21272,10 @@
             },
             "29": {
               "status": "trabalho",
-              "turno": "janta ",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "10:00",
+              "saida": "22:00"
             },
             "30": {
               "status": "trabalho",
@@ -21293,7 +21293,7 @@
           "turnoPredominante": "Janta",
           "dias": {
             "1": {
-              "status": "trabalho",
+              "status": "folga",
               "turno": "Almoço",
               "jornada": "continua",
               "entrada": "12:00",
@@ -21440,10 +21440,10 @@
               "saida": "22:00"
             },
             "22": {
-              "status": "folga_dom",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
+              "status": "trabalho",
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "12:00",
               "saida": "00:00"
             },
             "23": {
@@ -21521,8 +21521,8 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "12:00",
-              "saida": "00:00"
+              "entrada": "10:00",
+              "saida": "22:00"
             },
             "3": {
               "status": "folga",
@@ -21661,8 +21661,8 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "12:00",
-              "saida": "00:00"
+              "entrada": "10:00",
+              "saida": "22:00"
             },
             "23": {
               "status": "folga",
@@ -21729,11 +21729,11 @@
           "turnoPredominante": "Janta",
           "dias": {
             "1": {
-              "status": "folga_dom",
-              "turno": "Janta",
-              "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "status": "trabalho",
+              "turno": "Almoço",
+              "jornada": "continua",
+              "entrada": "11:00",
+              "saida": "23:00"
             },
             "2": {
               "status": "trabalho",
@@ -21876,7 +21876,7 @@
               "saida": "23:00"
             },
             "22": {
-              "status": "trabalho",
+              "status": "folga",
               "turno": "Almoço",
               "jornada": "continua",
               "entrada": "11:00",
@@ -24377,5 +24377,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 124
+  "versao": 125
 }
