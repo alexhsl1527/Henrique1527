@@ -259,7 +259,7 @@
       "setorId": "mr0z6mqwfbikn",
       "turno": "Janta",
       "horario": null,
-      "funcao": "Garçom"
+      "funcao": ""
     },
     {
       "id": "ms90guxutetqi",
@@ -24377,5 +24377,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 134
+  "versao": 135
 }
