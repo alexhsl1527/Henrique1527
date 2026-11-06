@@ -22008,10 +22008,10 @@
             },
             "4": {
               "status": "trabalho",
-              "turno": "Janta",
+              "turno": "Almoço",
               "jornada": "padrao",
-              "entrada": "17:00",
-              "saida": "00:00"
+              "entrada": "10:00",
+              "saida": "17:00"
             },
             "5": {
               "status": "folga",
@@ -22643,8 +22643,8 @@
               "status": "trabalho",
               "turno": "Almoço",
               "jornada": "continua",
-              "entrada": "10:00",
-              "saida": "22:00"
+              "entrada": "12:00",
+              "saida": "00:00"
             },
             "2": {
               "status": "folga",
@@ -22662,7 +22662,7 @@
             },
             "4": {
               "status": "trabalho",
-              "turno": "Almoço",
+              "turno": "Janta",
               "jornada": "padrao",
               "entrada": "17:00",
               "saida": "00:00"
@@ -24400,5 +24400,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 149
+  "versao": 150
 }
