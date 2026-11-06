@@ -258,7 +258,12 @@
       "nome": "GABRIEL",
       "setorId": "mr0z6mqwfbikn",
       "turno": "Janta",
-      "horario": null,
+      "horario": {
+        "entP": "17:00",
+        "saiP": "00:00",
+        "ent10": "11:00",
+        "sai10": "23:00"
+      },
       "funcao": ""
     },
     {
@@ -24377,5 +24382,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 135
+  "versao": 136
 }
