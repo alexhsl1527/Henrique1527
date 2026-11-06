@@ -291,10 +291,15 @@
     },
     {
       "id": "mshxdpby8miwu",
-      "nome": "Ruan",
+      "nome": "RUAN",
       "setorId": "mr0z6mqwfbikn",
       "turno": "almoço",
-      "horario": null,
+      "horario": {
+        "entP": "10:00",
+        "saiP": "22:00",
+        "ent10": "10:00",
+        "sai10": "22:00"
+      },
       "funcao": ""
     },
     {
@@ -24395,5 +24400,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 141
+  "versao": 142
 }
