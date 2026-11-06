@@ -325,6 +325,19 @@
         "ent10": "",
         "sai10": "22:00"
       }
+    },
+    {
+      "id": "mw58vake916jf",
+      "nome": "GABRIEL",
+      "setorId": "mr0z6mqwfbikn",
+      "funcao": "",
+      "turno": "Almoço",
+      "horario": {
+        "entP": "17:00",
+        "saiP": "00:00",
+        "ent10": "10:00",
+        "sai10": "22:00"
+      }
     }
   ],
   "escalas": [
@@ -24382,5 +24395,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 140
+  "versao": 141
 }
