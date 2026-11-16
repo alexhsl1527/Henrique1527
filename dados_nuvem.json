@@ -23285,9 +23285,9 @@
             },
             "28": {
               "status": "trabalho",
-              "turno": "Almoço",
-              "jornada": "continua",
-              "entrada": "12:00",
+              "turno": "Janta",
+              "jornada": "padrao",
+              "entrada": "17:00",
               "saida": "00:00"
             },
             "29": {
@@ -24400,5 +24400,5 @@
       "criadoEm": "2026-10-22T14:17:09.867Z"
     }
   ],
-  "versao": 152
+  "versao": 153
 }
