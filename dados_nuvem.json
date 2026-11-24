@@ -316,7 +316,12 @@
       "setorId": "mr0z7l24epxru",
       "funcao": "Recreadora",
       "turno": "Janta",
-      "horario": null
+      "horario": {
+        "entP": "17:00",
+        "saiP": "23:30",
+        "ent10": "",
+        "sai10": ""
+      }
     },
     {
       "id": "mvjj4m2ddmgcc",
@@ -25103,5 +25108,5 @@
       "criadoEm": "2026-11-24T14:25:11.401Z"
     }
   ],
-  "versao": 162
+  "versao": 163
 }
